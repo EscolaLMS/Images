@@ -1,0 +1,34 @@
+{
+    "name": "escolalms/images",
+    "description": "Escola Headless LMS Images manipulation",
+    "type": "package",
+    "require": {
+        "php": ">=7.4",
+        "laravel/framework": ">=7.0",
+        "intervention/image": "^2",
+        "intervention/imagecache": "^2",
+        "spatie/laravel-image-optimizer": "^1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0",
+        "orchestra/testbench": ">=5.0"
+    },
+    "license": "MIT",
+    "authors": [{
+        "name": "Mateusz Wojczal",
+        "email": "mateusz.wojczal@escola.pl"
+    }],
+    "autoload": {
+        "psr-4": {
+            "EscolaLms\\Images\\": "src",
+            "EscolaLms\\Images\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "EscolaLms\\Images\\EscolaLmsImagesServiceProvider"
+            ]
+        }
+    }
+}
