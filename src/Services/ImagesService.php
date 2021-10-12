@@ -6,22 +6,28 @@ namespace EscolaLms\Images\Services;
 use EscolaLms\Images\Services\Contracts\ImagesServiceContract;
 use Intervention\Image\Facades\Image;
 use Spatie\ImageOptimizer\OptimizerChainFactory;
+use Illuminate\Support\Facades\Storage;
 
 class ImagesService implements ImagesServiceContract
 {
-    public function render($path, $params): String
+    public function images(array $paths):array
+    {
+        return array_map(fn ($path) => $this->render($path['path'], $path['params'] ?? []), $paths);
+    }
+    public function render($path, $params): array
     {
         $hash = md5($path.json_encode($params));
-        $input_file = storage_path('app/public/'.$path);
+        $disk = Storage::disk('local');
+
+        $input_file = $disk->path($path);
         $ext = pathinfo($path)['extension'];
-        $output_file = storage_path('imgcache/'.$hash.'.'.$ext);
 
-        if (!is_file($output_file)) {
-            $dir = dirname($output_file);
+        $output_file = 'imgcache/'.$hash.'.'.$ext;
 
-            if (!is_dir($dir)) {
-                mkdir($dir, 0777, true);
-            }
+        if (!$disk->exists($output_file)) {
+            $output_path = $disk->path($output_file);
+            $dir = dirname($output_path);
+            $disk->makeDirectory($dir);
 
             $img = Image::make($input_file);
 
@@ -32,12 +38,16 @@ class ImagesService implements ImagesServiceContract
                     $constraint->aspectRatio();
                 });
             }
-        
-            $img->save($output_file);
+
+            $img->save($output_path);
             $optimizerChain = OptimizerChainFactory::create();
-            $optimizerChain->optimize($output_file);
+            $optimizerChain->optimize($output_path);
         }
 
-        return  $output_file;
+        return  [
+            'url' => $disk->url($output_file),
+            'path' => $output_file,
+            'hash' => $hash
+        ];
     }
 }
