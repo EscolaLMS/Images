@@ -4,8 +4,10 @@ namespace EscolaLms\Images\Http\Controllers;
 
 use Illuminate\Routing\Controller;
 use EscolaLms\Images\Services\Contracts\ImagesServiceContract;
-use Illuminate\Http\Request;
 use EscolaLms\Images\Http\Controllers\Swagger\ImagesControllerSwagger;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 /**
  * Class CourseController
@@ -22,16 +24,16 @@ class ImagesController extends Controller implements ImagesControllerSwagger
         $this->imagesService = $imagesService;
     }
 
-    public function image(Request $request)
+    public function image(Request $request) : RedirectResponse
     {
         $path = $request->get('path');
         $params = $request->except(['path']);
 
         $output = $this->imagesService->render($path, $params);
-        return response()->file($output['path']);
+        return redirect($output['url']);
     }
 
-    public function images(Request $request)
+    public function images(Request $request) : JsonResponse
     {
         $paths = $request->input('paths');
         $output = $this->imagesService->images($paths);
