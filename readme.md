@@ -119,6 +119,7 @@ Fortunately this endpoint creates an requested image, caches it and returns redi
 A major disadvantage of this approach is that first user once will get 404 in networking and experince few seconds delay before image is rendered after not founded. 
 
 ```html
+<script type="text/javascript" src="sha1.js"></script>
 <script>
   // Initial variables 
   const imgPath = "tutor_avatar.jpg";
