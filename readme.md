@@ -13,7 +13,7 @@ The input images are stored by Laravel in any of available disk (local storage/s
 
 The initial resize is done by [Intervention/image](https://github.com/Intervention/image) with `GD` driver. That can be [configured](http://image.intervention.io/getting_started/configuration). 
 
-All images are optimized with [image-optimizer](https://packagist.org/packages/spatie/image-optimizer).
+After inital resized all the images are optimized with [image-optimizer](https://packagist.org/packages/spatie/image-optimizer).
 
 For best results binaries must [be installed](https://github.com/spatie/image-optimizer#optimization-tools). EscolaLMS prepared [Docker Images](https://hub.docker.com/r/escolalms/php) are available for development (tag `work`) and production (tag `prod`).
 
