@@ -18,6 +18,7 @@ class ImagesService implements ImagesServiceContract
     }
     public function render($path, $params): array
     {
+
         $hash = sha1($path.json_encode($params));
         $disk = Storage::disk('local');
 

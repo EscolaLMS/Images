@@ -1,4 +1,4 @@
-name: Tests PHPUnit in environments1
+name: Tests PHPUnit in environments
 
 on: [pull_request]
 
