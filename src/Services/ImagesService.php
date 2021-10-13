@@ -4,7 +4,9 @@
 namespace EscolaLms\Images\Services;
 
 use EscolaLms\Images\Services\Contracts\ImagesServiceContract;
-use Intervention\Image\Facades\Image;
+// use Intervention\Image\Facades\Image;
+use Intervention\Image\ImageManagerStatic as Image;
+
 use Spatie\ImageOptimizer\OptimizerChainFactory;
 use Illuminate\Support\Facades\Storage;
 
@@ -16,7 +18,7 @@ class ImagesService implements ImagesServiceContract
     }
     public function render($path, $params): array
     {
-        $hash = md5($path.json_encode($params));
+        $hash = sha1($path.json_encode($params));
         $disk = Storage::disk('local');
 
         $input_file = $disk->path($path);
@@ -24,9 +26,10 @@ class ImagesService implements ImagesServiceContract
 
         $output_file = 'imgcache/'.$hash.'.'.$ext;
 
+        // TODO POC AWS s3
+
         if (!$disk->exists($output_file)) {
-            $output_path = $disk->path($output_file);
-            $dir = dirname($output_path);
+            $dir = dirname($output_file);
             $disk->makeDirectory($dir);
 
             $img = Image::make($input_file);
@@ -39,9 +42,9 @@ class ImagesService implements ImagesServiceContract
                 });
             }
 
-            $img->save($output_path);
+            $img->save($disk->path($output_file));
             $optimizerChain = OptimizerChainFactory::create();
-            $optimizerChain->optimize($output_path);
+            $optimizerChain->optimize($disk->path($output_file));
         }
 
         return  [
