@@ -46,22 +46,22 @@ Content-Type: application/json
 Content-Length: 212
 
 {
-	"paths": [{
-		"path": "tutor_avatar.jpg",
-		"params": {
-			"w": 100
-		}
-	}, {
-		"path": "tutor_avatar.jpg",
-		"params": {
-			"w": 200
-		}
-	}, {
-		"path": "tutor_avatar.jpg",
-		"params": {
-			"w": 300
-		}
-	}]
+  "paths": [{
+    "path": "tutor_avatar.jpg",
+    "params": {
+      "w": 100
+    }
+  }, {
+    "path": "tutor_avatar.jpg",
+    "params": {
+      "w": 200
+    }
+  }, {
+    "path": "tutor_avatar.jpg",
+    "params": {
+      "w": 300
+    }
+  }]
 } 
 ```
 
@@ -69,21 +69,21 @@ generates following result
 
 ```json
 [
-	{
-		"url": "http://localhost/storage/imgcache/3421584c40d270d0fa7ef0c31445a1565db07cb4.jpg",
-		"path": "imgcache/3421584c40d270d0fa7ef0c31445a1565db07cb4.jpg",
-		"hash": "3421584c40d270d0fa7ef0c31445a1565db07cb4"
-	},
-	{
-		"url": "http://localhost/storage/imgcache/7efc528c2cc7b57d79a42f80d2c1891b517cabfe.jpg",
-		"path": "imgcache/7efc528c2cc7b57d79a42f80d2c1891b517cabfe.jpg",
-		"hash": "7efc528c2cc7b57d79a42f80d2c1891b517cabfe"
-	},
-	{
-		"url": "http://localhost/storage/imgcache/5db4f572d8c8b1cb6ad97a3bffc9fd6c18b56cc3.jpg",
-		"path": "imgcache/5db4f572d8c8b1cb6ad97a3bffc9fd6c18b56cc3.jpg",
-		"hash": "5db4f572d8c8b1cb6ad97a3bffc9fd6c18b56cc3"
-	}
+  {
+    "url": "http://localhost/storage/imgcache/3421584c40d270d0fa7ef0c31445a1565db07cb4.jpg",
+    "path": "imgcache/3421584c40d270d0fa7ef0c31445a1565db07cb4.jpg",
+    "hash": "3421584c40d270d0fa7ef0c31445a1565db07cb4"
+  },
+  {
+    "url": "http://localhost/storage/imgcache/7efc528c2cc7b57d79a42f80d2c1891b517cabfe.jpg",
+    "path": "imgcache/7efc528c2cc7b57d79a42f80d2c1891b517cabfe.jpg",
+    "hash": "7efc528c2cc7b57d79a42f80d2c1891b517cabfe"
+  },
+  {
+    "url": "http://localhost/storage/imgcache/5db4f572d8c8b1cb6ad97a3bffc9fd6c18b56cc3.jpg",
+    "path": "imgcache/5db4f572d8c8b1cb6ad97a3bffc9fd6c18b56cc3.jpg",
+    "hash": "5db4f572d8c8b1cb6ad97a3bffc9fd6c18b56cc3"
+  }
 ] 
 ```
 
@@ -120,43 +120,43 @@ A major disadvantage of this approach is that first user once will get 404 in ne
 
 ```html
 <script>
-	// Initial variables 
-	const imgPath = "tutor_avatar.jpg";
-	const imgPrefix = "http://localhost/storage/imgcache";
-	const apiUrl = "http://localhost/api/images/img";
-	const rndWith = Math.round(Math.random() * 1000);
-	const params = { w: rndWith.toString() }; // random width params
-	// super important that all param values are strings 
-	// hash from { w: 100 } is different then { w: "100" }
+  // Initial variables 
+  const imgPath = "tutor_avatar.jpg";
+  const imgPrefix = "http://localhost/storage/imgcache";
+  const apiUrl = "http://localhost/api/images/img";
+  const rndWith = Math.round(Math.random() * 1000);
+  const params = { w: rndWith.toString() }; // random width params
+  // super important that all param values are strings 
+  // hash from { w: 100 } is different then { w: "100" }
 			
-	// stright forward helper to convert obejct to URL query params 
-	const paramsToUrl = (params) =>
-			Object.entries(params)
-				.map((e) => e.join("="))
-				.join("&");
+  // stright forward helper to convert obejct to URL query params 
+  const paramsToUrl = (params) =>
+    Object.entries(params)
+      .map((e) => e.join("="))
+      .join("&");
 
-	/** 
-	 * @param string path, example "tutor_avatar.jpg"
-	 * @param array params, example { w: "100" } or { w: "100", h: "10" }
-	 * @return Image 
-	 */ 
-	const getImage = (path, params) => {
-		const hash = SHA1(path + JSON.stringify(params));
-		const url = `${imgPrefix}/${hash}.${path.split(".").pop()}`;
-		const imgApiUrl = `${apiUrl}/?path=${imgPath}&${paramsToUrl(params)}`;
-		const image = new Image();
-		image.src = url;
-		image.onerror = () => {
-			if (image.src != imgApiUrl) {
-				// the cached version does not exists yet, lets call API to create one and redirect.
-				image.src = imgApiUrl;
-			}
-		};
+  /** 
+   * @param string path, example "tutor_avatar.jpg"
+   * @param array params, example { w: "100" } or { w: "100", h: "10" }
+   * @return Image 
+   */ 
+  const getImage = (path, params) => {
+    const hash = SHA1(path + JSON.stringify(params));
+    const url = `${imgPrefix}/${hash}.${path.split(".").pop()}`;
+    const imgApiUrl = `${apiUrl}/?path=${imgPath}&${paramsToUrl(params)}`;
+    const image = new Image();
+    image.src = url;
+    image.onerror = () => {
+      if (image.src != imgApiUrl) {
+        // the cached version does not exists yet, lets call API to create one and redirect.
+        image.src = imgApiUrl;
+      }
+    };
 
-		return image;
-	};
+    return image;
+  };
 
-	document.body.appendChild(getImage(imgPath, params));
+  document.body.appendChild(getImage(imgPath, params));
 </script> 
 ```
 
