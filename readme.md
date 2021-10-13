@@ -9,24 +9,25 @@
 
 The package creates resized images from source by given parameters. This is a headless approach so the backend doesn't know the requested sizes before frontend requests any. 
 
-The input images are stored by Laravel in any of available disk. Once a resized version is requested a cached version in created and returend. Below are examples to show the overall idea. 
+The input images are stored by Laravel in any of available disk (local storage/s3/any bucket). Once a resized version is requested a cached version in created and returend. Below are examples to show the overall idea. 
 
 All images are optimized with [image-optimizer](https://packagist.org/packages/spatie/image-optimizer).
 
-For best results binaries must [be installed](https://github.com/spatie/image-optimizer#optimization-tools). EscolaLMS prepared [Docker Images](https://hub.docker.com/r/escolalms/php) are available for development (tag work) and production (tag prod).
+For best results binaries must [be installed](https://github.com/spatie/image-optimizer#optimization-tools). EscolaLMS prepared [Docker Images](https://hub.docker.com/r/escolalms/php) are available for development (tag `work`) and production (tag `prod`).
+
+There is API endpoints documentation [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/Images/)
 
 ## Installation
 
 `composer require escolalms/images`
 
+## Examples
 
-## Examples Resizing
-
-### one image as redirect result 
+### Default. One image as `302` redirect result . 
 
 Basic resize is made by URL API call which redirects to new created file 
 
-Example 
+Example `GET` call 
 
 - `http://localhost/api/images/img?path=test.jpg&w=100` call should return resized image to width 100px
 - checks if file exsitis 
@@ -34,9 +35,9 @@ Example
 - returns 302 redirect 
 - example `http://localhost/storage/imgcache/891ee133a8bb111497d494d4c91fe292d9d16bb3.jpg` (assuming you're using local disk storage, in case of s3 location origin would differ)
 
-### Json resizing many images at once 
+### Resizing many images at once. JSON array as a result. 
 
-Example POST call like 
+Example `POST` call like 
 
 ```bash
 POST /api/images/img HTTP/1.1
@@ -88,7 +89,7 @@ generates following result
 
 ## Hashing algorithm 
 
-There is simple algorithm to guess the result image URL 
+There is simple algorithm to guess the result image URL. This allows frontend application to know the processed URL without calling API. As follows 
 
 ```php 
 $path = 'test.jpg';
@@ -105,7 +106,7 @@ $output_file = $url_prefix.$hash.$extension;
 
 ## Frontend implmementation 
 
-Below is our totally headless approach on generating images 
+Below is our totally **headless** approach on generating images 
 
 The following example tries to achives 2 purposes 
 - generate image on fly, frontend decide what sizes are needed
@@ -116,7 +117,6 @@ If that URL is throwing 404 then we're calling the API endpoint to generate one.
 Fortunately this endpoint creates an requested image, caches it and returns redirect which is good for image src. 
 
 A major disadvantage of this approach is that first user once will get 404 in networking and experince few seconds delay before image is rendered after not founded. 
-
 
 ```html
 <script>
