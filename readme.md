@@ -153,4 +153,4 @@ Fortunately this endpoint creates an requested image, caches it and returns redi
     </script> 
 ```
 
-Working example is availabe in [docs](docs) folder. 
+Working example is availabe in [doc](doc) folder. 
