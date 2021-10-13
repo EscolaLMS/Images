@@ -4,24 +4,33 @@
 namespace EscolaLms\Images\Services;
 
 use EscolaLms\Images\Services\Contracts\ImagesServiceContract;
-use Intervention\Image\Facades\Image;
+// use Intervention\Image\Facades\Image;
+use Intervention\Image\ImageManagerStatic as Image;
+
 use Spatie\ImageOptimizer\OptimizerChainFactory;
+use Illuminate\Support\Facades\Storage;
 
 class ImagesService implements ImagesServiceContract
 {
-    public function render($path, $params): String
+    public function images(array $paths):array
     {
-        $hash = md5($path.json_encode($params));
-        $input_file = storage_path('app/public/'.$path);
+        return array_map(fn ($path) => $this->render($path['path'], $path['params'] ?? []), $paths);
+    }
+    public function render($path, $params): array
+    {
+        $hash = sha1($path.json_encode($params));
+        $disk = Storage::disk('local');
+
+        $input_file = $disk->path($path);
         $ext = pathinfo($path)['extension'];
-        $output_file = storage_path('imgcache/'.$hash.'.'.$ext);
 
-        if (!is_file($output_file)) {
+        $output_file = 'imgcache/'.$hash.'.'.$ext;
+
+        // TODO POC AWS s3
+
+        if (!$disk->exists($output_file)) {
             $dir = dirname($output_file);
-
-            if (!is_dir($dir)) {
-                mkdir($dir, 0777, true);
-            }
+            $disk->makeDirectory($dir);
 
             $img = Image::make($input_file);
 
@@ -32,12 +41,16 @@ class ImagesService implements ImagesServiceContract
                     $constraint->aspectRatio();
                 });
             }
-        
-            $img->save($output_file);
+
+            $img->save($disk->path($output_file));
             $optimizerChain = OptimizerChainFactory::create();
-            $optimizerChain->optimize($output_file);
+            $optimizerChain->optimize($disk->path($output_file));
         }
 
-        return  $output_file;
+        return  [
+            'url' => $disk->url($output_file),
+            'path' => $output_file,
+            'hash' => $hash
+        ];
     }
 }
