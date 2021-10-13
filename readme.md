@@ -111,6 +111,9 @@ The idea is that since we know tha hashing algoritm for cached images we can gue
 If that URL is throwing 404 then we're calling the API endpoint to generate one. 
 Fortunately this endpoint creates an requested image, caches it and returns redirect which is good for image src. 
 
+A major disadvantage of this approach is that first user once will get 404 in networking and experince few seconds delay before image is rendered after not founded. 
+
+
 ```html
 <script>
 	  // Initial variables 
@@ -118,7 +121,7 @@ Fortunately this endpoint creates an requested image, caches it and returns redi
       const imgPrefix = "http://localhost/storage/imgcache";
       const apiUrl = "http://localhost/api/images/img";
       const rndWith = Math.round(Math.random() * 1000);
-	  const params = { w: rndWith.toString() }; // random with params
+	  const params = { w: rndWith.toString() }; // random width params
 	  // super important that all param values are strings 
 	  // hash from { w: 100 } is different then { w: "100" }
        
