@@ -91,3 +91,59 @@ then result URL would be
 ```php
 $output_file = $url_prefix.$hash.$extension;
 ```
+
+## Frontend implmementation 
+
+Below is our totally headless approach on generating images 
+
+The following example tries to achives 2 purposes 
+- generate image on fly, frontend decide what sizes are needed
+- images are not served by API 
+
+The idea is that since we know tha hashing algoritm for cached images we can guess that the URL will be like. 
+If that URL is throwing 404 then we're calling the API endpoint to generate one. 
+Fortunately this endpoint creates an requested image, caches it and returns redirect which is good for image src. 
+
+```html
+<script>
+	  // Initial variables 
+      const imgPath = "tutor_avatar.jpg";
+      const imgPrefix = "http://localhost/storage/imgcache";
+      const apiUrl = "http://localhost/api/images/img";
+      const rndWith = Math.round(Math.random() * 1000);
+	  const params = { w: rndWith.toString() }; // random with params
+	  // super important that all param values are strings 
+	  // hash from { w: 100 } is different then { w: "100" }
+       
+	  // stright forward helper to convert obejct to URL query params 
+	  const paramsToUrl = (params) =>
+        Object.entries(params)
+          .map((e) => e.join("="))
+          .join("&");
+
+	/** 
+	 * @param string path, example "tutor_avatar.jpg"
+	 * @param array params, example { w: "100" } or { w: "100", h: "10" }
+	 * @return Image 
+	 */ 
+      const getImage = (path, params) => {
+        const hash = SHA1(path + JSON.stringify(params));
+        const url = `${imgPrefix}/${hash}.${path.split(".").pop()}`;
+        const imgApiUrl = `${apiUrl}/?path=${imgPath}&${paramsToUrl(params)}`;
+        const image = new Image();
+        image.src = url;
+        image.onerror = () => {
+          if (image.src != imgApiUrl) {
+            // the cached version does not exists yet, lets call API to create one and redirect.
+            image.src = imgApiUrl;
+          }
+        };
+
+        return image;
+      };
+
+      document.body.appendChild(getImage(imgPath, params));
+    </script> 
+```
+
+Working example is availabe in [docs](docs) folder. 

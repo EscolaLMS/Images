@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <meta
+      name="viewport"
+      content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width"
+    />
+    <title>Image resize demo</title>
+  </head>
+  <body>
+    <script type="text/javascript" src="sha1.js"></script>
+    <script>
+      const imgPath = "tutor_avatar.jpg";
+      const imgPrefix = "http://localhost:1000/storage/imgcache";
+      const apiUrl = "http://localhost:1000/api/images/img";
+
+      const rndWith = Math.round(Math.random() * 1000);
+
+      const params = { w: rndWith.toString() }; // super important that all param values are strings
+      const paramsToUrl = (params) =>
+        Object.entries(params)
+          .map((e) => e.join("="))
+          .join("&");
+
+      const getImage = (path, params) => {
+        const hash = SHA1(path + JSON.stringify(params));
+        const url = `${imgPrefix}/${hash}.${path.split(".").pop()}`;
+        const imgApiUrl = `${apiUrl}/?path=${imgPath}&${paramsToUrl(params)}`;
+        const image = new Image();
+        image.src = url;
+        image.onerror = () => {
+          if (image.src != imgApiUrl) {
+            // the cached version does not exists yet, lets call API to create one and redirect.
+            image.src = imgApiUrl;
+          }
+        };
+
+        return image;
+      };
+
+      document.body.appendChild(getImage(imgPath, params));
+    </script>
+  </body>
+</html>
