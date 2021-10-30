@@ -55,7 +55,7 @@ jobs:
             chmod +x ./cc-test-reporter
       
       - name: Convert 
-        run: cc-test-reporter format-coverage coverage.xml -t clover -o codeclimate.0.json
+        run: ./cc-test-reporter format-coverage coverage.xml -t clover -o codeclimate.0.json
         
       - name: Upload
-        run: cc-test-reporter upload-coverage -i tmp/codeclimate.total.json
+        run: ./cc-test-reporter upload-coverage -i codeclimate.0.json
