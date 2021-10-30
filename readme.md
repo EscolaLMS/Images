@@ -7,6 +7,7 @@
 [![downloads](https://img.shields.io/packagist/v/escolalms/images)](https://packagist.org/packages/escolalms/images)
 [![downloads](https://img.shields.io/packagist/l/escolalms/images)](https://packagist.org/packages/escolalms/images)
 [![Maintainability](https://api.codeclimate.com/v1/badges/7dfeae0462e3599797bf/maintainability)](https://codeclimate.com/github/EscolaLMS/Images/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/7dfeae0462e3599797bf/test_coverage)](https://codeclimate.com/github/EscolaLMS/Images/test_coverage)
 
 The package creates resized images from source by given parameters. This is a headless approach so the backend doesn't know the requested sizes before frontend requests any. 
 
