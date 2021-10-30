@@ -53,5 +53,7 @@ jobs:
         uses: paambaati/codeclimate-action@v3.0.0
         with:
           coverageCommand: apt-get install git -y
+          coverageLocations: |
+            ${{github.workspace}}/coverage.xml:clover
         env:
           CC_TEST_REPORTER_ID: 95f354aa6873ed12bbe261fad8f7d58fef59a18146936429661ac20c3308a1a6
