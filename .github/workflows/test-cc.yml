@@ -29,6 +29,9 @@ jobs:
 
     steps:
       - name: Instantiate package
+        run: apt-get install git -y
+        
+      - name: Instantiate package
         uses: actions/checkout@v2
 
       - name: Setup environment
