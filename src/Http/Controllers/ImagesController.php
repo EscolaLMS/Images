@@ -24,7 +24,7 @@ class ImagesController extends Controller implements ImagesControllerSwagger
         $this->imagesService = $imagesService;
     }
 
-    public function image(Request $request) : RedirectResponse
+    public function image(Request $request): RedirectResponse
     {
         $path = $request->get('path');
         $params = $request->except(['path']);
@@ -33,7 +33,7 @@ class ImagesController extends Controller implements ImagesControllerSwagger
         return redirect($output['url']);
     }
 
-    public function images(Request $request) : JsonResponse
+    public function images(Request $request): JsonResponse
     {
         $paths = $request->input('paths');
         $output = $this->imagesService->images($paths);

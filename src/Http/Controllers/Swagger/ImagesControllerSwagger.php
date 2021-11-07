@@ -25,6 +25,12 @@ interface ImagesControllerSwagger
      *             type="path",
      *         )
      *     ),
+     *     @OA\Property(
+     *         property="size",
+     *         description="predefined size",
+     *         type="string",
+     *         example="thumbnail"
+     *     ),
      *     @OA\Parameter(
      *         name="w",
      *         in="query",
@@ -33,7 +39,14 @@ interface ImagesControllerSwagger
      *             default="100",
      *         )
      *     ),
-     *
+     *     @OA\Parameter(
+     *         name="h",
+     *         in="query",
+     *         @OA\Schema(
+     *             type="int",
+     *             default="100",
+     *         )
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="resized file operation",
@@ -52,7 +65,7 @@ interface ImagesControllerSwagger
     /**
      * @OA\Post(
      *     path="/api/images/img",
-     *     summary="Lists resized images by array input ",
+     *     summary="Lists resized images by array input",
      *     tags={"Images"},
      *     security={
      *         {"passport": {}},
@@ -62,36 +75,41 @@ interface ImagesControllerSwagger
      *          @OA\MediaType(
      *              mediaType="application/json",
      *              @OA\Schema(
-    *               type="array",
-    *               @OA\Items(
-    *               @OA\Property(
-    *                   property="path",
-    *                   description="Filepath",
-    *                   type="string",
-    *                   example="tutor_avatar.jpg"
-    *               ),
-    *               @OA\Property(
-    *                   property="params",
-    *                   description="params",
-    *                   type="object",
-    *                       @OA\Property(
-    *                       property="w",
-    *                       description="width",
-    *                       type="integer",
-    *                       example="100"
-    *                       ),
-*                           @OA\Property(
-    *                       property="h",
-    *                       description="height",
-    *                       type="integer",
-    *                       example="100"
-    *                       )
-    *
-    *               )
-    *               ),
-    *           )
+     *                  type="array",
+     *                  @OA\Items(
+     *                      @OA\Property(
+     *                          property="path",
+     *                          description="Filepath",
+     *                          type="string",
+     *                          example="tutor_avatar.jpg"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="params",
+     *                          description="params",
+     *                          type="object",
+     *                          @OA\Property(
+     *                              property="size",
+     *                              description="predefined size",
+     *                              type="string",
+     *                              example="thumbnail"
+     *                          ),
+     *                          @OA\Property(
+     *                              property="w",
+     *                              description="width",
+     *                              type="integer",
+     *                              example="100"
+     *                          ),
+     *                          @OA\Property(
+     *                              property="h",
+     *                              description="height",
+     *                              type="integer",
+     *                              example="100"
+     *                          ),
+     *                      ),
+     *                  ),
+     *              ),
      *          ),
-     *      ),
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="successful operation",
@@ -99,11 +117,11 @@ interface ImagesControllerSwagger
      *     @OA\Response(
      *          response=404,
      *          description="Target path access is not found",
-     *      ),
+     *     ),
      *     @OA\Response(
      *          response=500,
      *          description="server-side error",
-     *      ),
+     *     ),
      * )
      *
      * @param Request $request
