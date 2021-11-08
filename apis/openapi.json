@@ -28,6 +28,14 @@
                             "type": "int",
                             "default": "100"
                         }
+                    },
+                    {
+                        "name": "h",
+                        "in": "query",
+                        "schema": {
+                            "type": "int",
+                            "default": "100"
+                        }
                     }
                 ],
                 "responses": {
@@ -43,7 +51,7 @@
                 "tags": [
                     "Images"
                 ],
-                "summary": "Lists resized images by array input ",
+                "summary": "Lists resized images by array input",
                 "operationId": "1292e04bc1c2304087096a8ea57384b7",
                 "requestBody": {
                     "required": true,
@@ -61,6 +69,11 @@
                                         "params": {
                                             "description": "params",
                                             "properties": {
+                                                "size": {
+                                                    "description": "predefined size",
+                                                    "type": "string",
+                                                    "example": "thumbnail"
+                                                },
                                                 "w": {
                                                     "description": "width",
                                                     "type": "integer",
