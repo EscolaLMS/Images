@@ -5,9 +5,17 @@ namespace EscolaLms\Images\Tests\Api;
 use Illuminate\Support\Facades\Storage;
 use EscolaLms\Images\Tests\TestCase;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\File;
 
 class ContentApiTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $path = Storage::disk('local')->path('imgcache');
+        File::cleanDirectory($path);
+    }
+
     public function test_image_get_redirect()
     {
         $filename = $path =  'test.jpg';
@@ -93,7 +101,7 @@ class ContentApiTest extends TestCase
     public function test_max_width()
     {
         $max_width = 500;
-        Config::set('images.max_width', $max_width);
+        Config::set('images.public.max_width', $max_width);
 
         $filename = $path =  'test.jpg';
         $filepath = realpath(__DIR__ . '/' . $filename);
@@ -127,11 +135,10 @@ class ContentApiTest extends TestCase
         $this->assertNotEquals($sizes[0], $width);
     }
 
-
     public function test_min_width()
     {
         $min_width = 100;
-        Config::set('images.min_width', $min_width);
+        Config::set('images.public.min_width', $min_width);
 
         $filename = $path =  'test.jpg';
         $filepath = realpath(__DIR__ . '/' . $filename);
@@ -167,7 +174,7 @@ class ContentApiTest extends TestCase
 
     public function test_predefined_sizes()
     {
-        Config::set('images.size_definitions', [
+        Config::set('images.public.size_definitions', [
             'thumbnail' => [
                 'w' => 400,
                 'h' => 300
@@ -206,9 +213,84 @@ class ContentApiTest extends TestCase
         $this->assertLessThanOrEqual(300, $sizes[1]);
     }
 
+
+    public function test_max_height()
+    {
+        $max_height = 200;
+        Config::set('images.public.max_height', $max_height);
+
+        $filename = $path =  'test.jpg';
+        $filepath = realpath(__DIR__ . '/' . $filename);
+
+        $disk = Storage::disk('local');
+        $storage_path = $disk->path($filename);
+
+        copy($filepath, $storage_path);
+
+        $height = 1000;
+        $params = [
+            'h' => $height
+        ];
+
+        $response = $this->call('GET', '/api/images/img', array_merge($params, ['path' => $path]));
+
+        // THIS is crutial becuase frontend is using the same algoritm to guess cached URL 
+        $hash = sha1($path . json_encode($params));
+
+        $cachedImageUrl = $response->getTargetUrl();
+
+        $this->assertStringContainsString($hash, $cachedImageUrl);
+
+        $output_file = 'imgcache/' . $hash . '.jpg';
+
+        $output_path = $disk->path($output_file);
+
+        $sizes = getimagesize($output_path);
+
+        $this->assertEquals($max_height, $sizes[1]);
+        $this->assertNotEquals($height, $sizes[1]);
+    }
+
+    public function test_min_height()
+    {
+        $min_height = 100;
+        Config::set('images.public.min_height', $min_height);
+
+        $filename = $path =  'test.jpg';
+        $filepath = realpath(__DIR__ . '/' . $filename);
+
+        $disk = Storage::disk('local');
+        $storage_path = $disk->path($filename);
+
+        copy($filepath, $storage_path);
+
+        $height = -1;
+        $params = [
+            'h' => $height
+        ];
+
+        $response = $this->call('GET', '/api/images/img', array_merge($params, ['path' => $path]));
+
+        // THIS is crutial becuase frontend is using the same algoritm to guess cached URL 
+        $hash = sha1($path . json_encode($params));
+
+        $cachedImageUrl = $response->getTargetUrl();
+
+        $this->assertStringContainsString($hash, $cachedImageUrl);
+
+        $output_file = 'imgcache/' . $hash . '.jpg';
+
+        $output_path = $disk->path($output_file);
+
+        $sizes = getimagesize($output_path);
+
+        $this->assertEquals($min_height, $sizes[1]);
+        $this->assertNotEquals($height, $sizes[1]);
+    }
+
     public function test_prevent_upscale()
     {
-        Config::set('images.allow_upscale', false);
+        Config::set('images.public.allow_upscale', false);
 
         $filename = $path =  'test.jpg';
         $filepath = realpath(__DIR__ . '/' . $filename);
@@ -242,5 +324,79 @@ class ContentApiTest extends TestCase
 
         $this->assertEquals($sizes_original[0], $sizes[0]);
         $this->assertNotEquals($width, $sizes[0]);
+    }
+
+    public function test_allowed_width()
+    {
+        $allowed_width = 300;
+        Config::set('images.public.allowed_widths', [$allowed_width]);
+
+        $filename = $path =  'test.jpg';
+        $filepath = realpath(__DIR__ . '/' . $filename);
+
+        $disk = Storage::disk('local');
+        $storage_path = $disk->path($filename);
+
+        copy($filepath, $storage_path);
+
+        $width = 400;
+        $params = [
+            'w' => $width,
+        ];
+
+        $response = $this->call('GET', '/api/images/img', array_merge($params, ['path' => $path]));
+
+        // THIS is crutial becuase frontend is using the same algoritm to guess cached URL 
+        $hash = sha1($path . json_encode($params));
+
+        $cachedImageUrl = $response->getTargetUrl();
+
+        $this->assertStringContainsString($hash, $cachedImageUrl);
+
+        $output_file = 'imgcache/' . $hash . '.jpg';
+
+        $output_path = $disk->path($output_file);
+
+        $sizes = getimagesize($output_path);
+
+        $this->assertEquals($allowed_width, $sizes[0]);
+        $this->assertNotEquals($width, $sizes[0]);
+    }
+
+    public function test_allowed_height()
+    {
+        $allowed_height = 200;
+        Config::set('images.public.allowed_heights', [$allowed_height]);
+
+        $filename = $path =  'test.jpg';
+        $filepath = realpath(__DIR__ . '/' . $filename);
+
+        $disk = Storage::disk('local');
+        $storage_path = $disk->path($filename);
+
+        copy($filepath, $storage_path);
+
+        $height = 250;
+        $params = [
+            'h' => $height,
+        ];
+
+        $response = $this->call('GET', '/api/images/img', array_merge($params, ['path' => $path]));
+
+        // THIS is crutial becuase frontend is using the same algoritm to guess cached URL 
+        $hash = sha1($path . json_encode($params));
+
+        $cachedImageUrl = $response->getTargetUrl();
+
+        $this->assertStringContainsString($hash, $cachedImageUrl);
+
+        $output_file = 'imgcache/' . $hash . '.jpg';
+
+        $output_path = $disk->path($output_file);
+
+        $sizes = getimagesize($output_path);
+
+        $this->assertEquals($allowed_height, $sizes[1]);
+        $this->assertNotEquals($height, $sizes[1]);
     }
 }

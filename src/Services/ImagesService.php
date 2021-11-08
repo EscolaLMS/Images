@@ -4,6 +4,7 @@ namespace EscolaLms\Images\Services;
 
 use EscolaLms\Images\Services\Contracts\ImagesServiceContract;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Constraint;
 use Intervention\Image\Image as InterventionImage;
 use Intervention\Image\ImageManagerStatic as Image;
 use Spatie\ImageOptimizer\OptimizerChainFactory;
@@ -35,7 +36,10 @@ class ImagesService implements ImagesServiceContract
 
             list($width, $height) = $this->determineWidthAndHeight($img, $params);
             if (!is_null($width) || !is_null($height)) {
-                $img = $img->resize($width, $height, function ($constraint) {
+                $img = $img->resize($width, $height, function (Constraint $constraint) {
+                    if (!config('images.public.allow_upscale', false)) {
+                        $constraint->upsize();
+                    }
                     $constraint->aspectRatio();
                 });
             }
@@ -55,7 +59,7 @@ class ImagesService implements ImagesServiceContract
     private function determineWidthAndHeight(InterventionImage $img, array $params): array
     {
         if (isset($params['size'])) {
-            $size_definitions = config('images.size_definitions');
+            $size_definitions = config('images.public.size_definitions');
             if (is_array($size_definitions) && array_key_exists($params['size'], $size_definitions)) {
                 return [
                     $this->determineWidth($img, $size_definitions[$params['size']]['w'] ?? null),
@@ -78,16 +82,17 @@ class ImagesService implements ImagesServiceContract
             return null;
         }
         $width = intval($width);
-        if (!empty(config('allowed_widths')) && is_array(config('allowed_widths'))) {
-            $width = max(array_filter(config('allowed_widths'), fn (int $allowed) => $allowed <= $width));
+        $allowed_widths = config('images.public.allowed_widths');
+        if (!empty($allowed_widths) && is_array($allowed_widths)) {
+            $width = max(array_filter($allowed_widths, fn (int $allowed) => $allowed <= $width));
         }
         $width = max(
             min(
                 $width,
-                config('images.allow_upscale', false) ? $width : $img->width(),
-                config('images.max_width', $width)
+                config('images.public.allow_upscale', false) ? $width : $img->width(),
+                config('images.public.max_width', $width)
             ),
-            config('images.min_width', 0),
+            config('images.public.min_width', 0),
             0
         );
         return $width === 0 ? null : $width;
@@ -99,16 +104,17 @@ class ImagesService implements ImagesServiceContract
             return null;
         }
         $height = intval($height);
-        if (!empty(config('allowed_heights')) && is_array(config('allowed_heights'))) {
-            $height = max(array_filter(config('allowed_heights'), fn (int $allowed) => $allowed <= $height));
+        $allowed_heights = config('images.public.allowed_heights');
+        if (!empty($allowed_heights) && is_array($allowed_heights)) {
+            $height = max(array_filter($allowed_heights, fn (int $allowed) => $allowed <= $height));
         }
         $height = max(
             min(
                 $height,
-                config('images.allow_upscale', false) ? $height : $img->height(),
-                config('images.max_height', $height)
+                config('images.public.allow_upscale', false) ? $height : $img->height(),
+                config('images.public.max_height', $height)
             ),
-            config('images.min_height', 0),
+            config('images.public.min_height', 0),
             0
         );
         return $height === 0 ? null : $height;
