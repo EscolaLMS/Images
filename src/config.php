@@ -20,10 +20,6 @@ return [
         'min_height' => 10,
         'min_width' => 10,
         /**
-         * Allow upscale - determines if width or height can be bigger than original image
-         */
-        'allow_upscale' => false,
-        /**
          *  Predefined image sizes, which can be requested by frontend instead of specyfing width/height of image
          */
         'size_definitions' => [

@@ -37,9 +37,7 @@ class ImagesService implements ImagesServiceContract
             list($width, $height) = $this->determineWidthAndHeight($img, $params);
             if (!is_null($width) || !is_null($height)) {
                 $img = $img->resize($width, $height, function (Constraint $constraint) {
-                    if (!config('images.public.allow_upscale', false)) {
-                        $constraint->upsize();
-                    }
+                    $constraint->upsize();
                     $constraint->aspectRatio();
                 });
             }
@@ -89,7 +87,7 @@ class ImagesService implements ImagesServiceContract
         $width = max(
             min(
                 $width,
-                config('images.public.allow_upscale', false) ? $width : $img->width(),
+                $img->width(),
                 config('images.public.max_width', $width)
             ),
             config('images.public.min_width', 0),
@@ -111,7 +109,7 @@ class ImagesService implements ImagesServiceContract
         $height = max(
             min(
                 $height,
-                config('images.public.allow_upscale', false) ? $height : $img->height(),
+                $img->height(),
                 config('images.public.max_height', $height)
             ),
             config('images.public.min_height', 0),

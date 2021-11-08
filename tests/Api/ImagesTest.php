@@ -281,8 +281,6 @@ class ContentApiTest extends TestCase
 
     public function test_prevent_upscale()
     {
-        Config::set('images.public.allow_upscale', false);
-
         $filename = $path =  'test.jpg';
         $filepath = realpath(__DIR__ . '/' . $filename);
 
