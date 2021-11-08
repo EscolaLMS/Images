@@ -12,8 +12,24 @@ class EscolaLmsImagesServiceProvider extends ServiceProvider
         ImagesServiceContract::class => ImagesService::class,
     ];
 
+    public function register()
+    {
+        $this->mergeConfigFrom(__DIR__ . '/config.php', 'images');
+    }
+
     public function boot()
     {
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
+
+        if ($this->app->runningInConsole()) {
+            $this->bootForConsole();
+        }
+    }
+
+    protected function bootForConsole(): void
+    {
+        $this->publishes([
+            __DIR__ . '/config.php' => config_path('images.php'),
+        ], 'images.config');
     }
 }
