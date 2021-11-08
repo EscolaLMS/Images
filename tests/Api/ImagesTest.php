@@ -24,18 +24,14 @@ class ContentApiTest extends TestCase
         $disk = Storage::disk('local');
         $storage_path = $disk->path($filename);
 
+        $sizes_original = getimagesize($filepath);
+
         copy($filepath, $storage_path);
 
-        $width = 100;
-
-        $params = [
-            'w' => $width
-        ];
-
-        $response = $this->call('GET', '/api/images/img', array_merge($params, ['path' => $path]));
+        $response = $this->call('GET', '/api/images/img', ['path' => $path]);
 
         // THIS is crutial becuase frontend is using the same algoritm to guess cached URL 
-        $hash = sha1($path . json_encode($params));
+        $hash = sha1($path . json_encode([]));
 
         $cachedImageUrl = $response->getTargetUrl();
 
@@ -47,7 +43,8 @@ class ContentApiTest extends TestCase
 
         $sizes = getimagesize($output_path);
 
-        $this->assertEquals($sizes[0], $width);
+        $this->assertEquals($sizes_original[0], $sizes[0]);
+        $this->assertEquals($sizes_original[1], $sizes[1]);
     }
 
     public function test_image_post_results()
@@ -59,12 +56,6 @@ class ContentApiTest extends TestCase
         $storage_path = $disk->path($filename);
 
         copy($filepath, $storage_path);
-
-        $width = 100;
-
-        $params = [
-            'w' => $width
-        ];
 
         $json = [
             "paths" => [
@@ -398,5 +389,22 @@ class ContentApiTest extends TestCase
 
         $this->assertEquals($allowed_height, $sizes[1]);
         $this->assertNotEquals($height, $sizes[1]);
+    }
+
+    public function test_rate_limit()
+    {
+        Config::set('images.private.rate_limit', 0);
+
+        $filename = $path =  'test.jpg';
+        $filepath = realpath(__DIR__ . '/' . $filename);
+
+        $disk = Storage::disk('local');
+        $storage_path = $disk->path($filename);
+
+        copy($filepath, $storage_path);
+
+        $response = $this->call('GET', '/api/images/img', ['path' => $path]);
+
+        $response->assertStatus(429);
     }
 }

@@ -31,12 +31,11 @@ class ImagesController extends Controller implements ImagesControllerSwagger
         $path = $request->get('path');
         $params = $request->except(['path']);
 
-        if (RateLimiter::retriesLeft('resize-image:' . $path, $perMinute = 5)) {
+        if (RateLimiter::retriesLeft('resize-image:' . $path, config('images.private.rate_limit', 5))) {
             RateLimiter::hit('resize-image:' . $path);
             $output = $this->imagesService->render($path, $params);
             return redirect($output['url']);
         }
-
         throw new TooManyRequestsHttpException();
     }
 

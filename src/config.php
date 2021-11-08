@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'private' => [
+        'rate_limit' => 5
+    ],
     'public' => [
         /**
          * Arrays of allowed height and widths, leave empty if any size between min and max can be used
