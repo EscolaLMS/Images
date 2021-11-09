@@ -31,6 +31,10 @@ class ImagesService implements ImagesServiceContract
         if (!$disk->exists($output_file)) {
             $dir = dirname($output_file);
             $disk->makeDirectory($dir);
+            $output_path = $disk->path($output_file);
+
+            // Create empty file as placeholder, so that subsequent calls wont try to resize same file
+            $disk->put($output_path, '');
 
             $img = Image::make($input_file);
 
@@ -42,9 +46,9 @@ class ImagesService implements ImagesServiceContract
                 });
             }
 
-            $img->save($disk->path($output_file));
+            $img->save($output_path);
             $optimizerChain = OptimizerChainFactory::create();
-            $optimizerChain->optimize($disk->path($output_file));
+            $optimizerChain->optimize($output_path);
         }
 
         return  [

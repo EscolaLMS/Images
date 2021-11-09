@@ -6,8 +6,9 @@ use Illuminate\Support\Facades\Storage;
 use EscolaLms\Images\Tests\TestCase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
+use Illuminate\Testing\TestResponse;
 
-class ContentApiTest extends TestCase
+class ImagesTest extends TestCase
 {
     protected function setUp(): void
     {
@@ -391,7 +392,7 @@ class ContentApiTest extends TestCase
 
     public function test_rate_limit()
     {
-        Config::set('images.private.rate_limit', 0);
+        Config::set('images.private.rate_limit_per_ip', 0);
 
         $filename = $path =  'test.jpg';
         $filepath = realpath(__DIR__ . '/' . $filename);
@@ -401,6 +402,7 @@ class ContentApiTest extends TestCase
 
         copy($filepath, $storage_path);
 
+        /** @var TestResponse $response */
         $response = $this->call('GET', '/api/images/img', ['path' => $path]);
 
         $response->assertStatus(429);
