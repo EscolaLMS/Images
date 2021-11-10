@@ -56,9 +56,7 @@ interface ImagesControllerSwagger
      *          description="server-side error",
      *      ),
      * )
-     *
-     * @param Request $request
-     * @return RedirectResponse
+     * 
      */
     public function image(Request $request): RedirectResponse;
 
@@ -124,8 +122,6 @@ interface ImagesControllerSwagger
      *     ),
      * )
      *
-     * @param Request $request
-     * @return JsonResponse
      */
     public function images(Request $request): JsonResponse;
 }
