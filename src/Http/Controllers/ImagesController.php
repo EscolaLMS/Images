@@ -31,14 +31,12 @@ class ImagesController extends Controller implements ImagesControllerSwagger
         $path = $request->get('path');
         $params = $request->except(['path']);
 
-        $rate_limiter_key = 'resize-image:' . $request->ip();
-        if (RateLimiter::retriesLeft('resize-image-global-limit', config('images.private.rate_limit_global', 20))) {
+        $rate_limiter_key = 'resize-image-' . $request->ip();
+        if (RateLimiter::retriesLeft('resize-image-global-limit', config('images.private.rate_limit_global', 20)) && RateLimiter::retriesLeft($rate_limiter_key, config('images.private.rate_limit_per_ip', 5))) {
             RateLimiter::hit('resize-image-global-limit');
-            if (RateLimiter::retriesLeft($rate_limiter_key, config('images.private.rate_limit_per_ip', 5))) {
-                RateLimiter::hit($rate_limiter_key);
-                $output = $this->imagesService->render($path, $params);
-                return redirect($output['url']);
-            }
+            RateLimiter::hit($rate_limiter_key);
+            $output = $this->imagesService->render($path, $params);
+            return redirect($output['url']);
         }
 
         throw new TooManyRequestsHttpException();
