@@ -15,6 +15,8 @@ class ImagesTest extends TestCase
         parent::setUp();
         $path = Storage::disk('local')->path('imgcache');
         File::cleanDirectory($path);
+        Config::set('images.private.rate_limit_global', 100);
+        Config::set('images.private.rate_limit_per_ip', 100);
     }
 
     public function test_image_get_redirect()
@@ -382,6 +384,7 @@ class ImagesTest extends TestCase
 
     public function test_rate_limit()
     {
+        Config::set('images.private.rate_limit_global', 0);
         Config::set('images.private.rate_limit_per_ip', 0);
 
         $filename = $path =  'test.jpg';
