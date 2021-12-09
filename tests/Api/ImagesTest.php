@@ -381,23 +381,4 @@ class ImagesTest extends TestCase
         $this->assertEquals($allowed_height, $sizes[1]);
         $this->assertNotEquals($height, $sizes[1]);
     }
-
-    public function test_rate_limit()
-    {
-        Config::set('images.private.rate_limit_global', 0);
-        Config::set('images.private.rate_limit_per_ip', 0);
-
-        $filename = $path =  'test.jpg';
-        $filepath = realpath(__DIR__ . '/' . $filename);
-
-        $disk = Storage::disk('local');
-        $storage_path = $disk->path($filename);
-
-        copy($filepath, $storage_path);
-
-        /** @var TestResponse $response */
-        $response = $this->call('GET', '/api/images/img', ['path' => $path]);
-
-        $response->assertStatus(429);
-    }
 }
