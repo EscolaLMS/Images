@@ -2,8 +2,8 @@
 
 return [
     'private' => [
-        'rate_limit_global' => 20,
-        'rate_limit_per_ip' => 5,
+        'rate_limit_global' => 1000,
+        'rate_limit_per_ip' => 1000,
     ],
     'public' => [
         /**
