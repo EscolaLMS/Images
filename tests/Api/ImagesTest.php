@@ -34,9 +34,7 @@ class ImagesTest extends TestCase
         // THIS is crutial becuase frontend is using the same algoritm to guess cached URL 
         $hash = sha1($path . json_encode([]));
 
-        $cachedImageUrl = $response->getTargetUrl();
-
-        $this->assertStringContainsString($hash, $cachedImageUrl);
+        $response->assertRedirectContains($hash);
 
         $output_file = 'imgcache/' . $hash . '.jpg';
 
@@ -108,14 +106,13 @@ class ImagesTest extends TestCase
             'w' => $width
         ];
 
+        /** @var TestResponse $response */
         $response = $this->call('GET', '/api/images/img', array_merge($params, ['path' => $path]));
 
         // THIS is crutial becuase frontend is using the same algoritm to guess cached URL 
         $hash = sha1($path . json_encode($params));
 
-        $cachedImageUrl = $response->getTargetUrl();
-
-        $this->assertStringContainsString($hash, $cachedImageUrl);
+        $response->assertRedirectContains($hash);
 
         $output_file = 'imgcache/' . $hash . '.jpg';
 
@@ -145,14 +142,13 @@ class ImagesTest extends TestCase
             'w' => $width
         ];
 
+        /** @var TestResponse $response */
         $response = $this->call('GET', '/api/images/img', array_merge($params, ['path' => $path]));
 
         // THIS is crutial becuase frontend is using the same algoritm to guess cached URL 
         $hash = sha1($path . json_encode($params));
 
-        $cachedImageUrl = $response->getTargetUrl();
-
-        $this->assertStringContainsString($hash, $cachedImageUrl);
+        $response->assertRedirectContains($hash);
 
         $output_file = 'imgcache/' . $hash . '.jpg';
 
@@ -185,14 +181,13 @@ class ImagesTest extends TestCase
             'size' => 'thumbnail',
         ];
 
+        /** @var TestResponse $response */
         $response = $this->call('GET', '/api/images/img', array_merge($params, ['path' => $path]));
 
-        // THIS is crutial becuase frontend is using the same algoritm to guess cached URL 
+        // THIS is crutial because frontend is using the same algoritm to guess cached URL 
         $hash = sha1($path . json_encode($params));
 
-        $cachedImageUrl = $response->getTargetUrl();
-
-        $this->assertStringContainsString($hash, $cachedImageUrl);
+        $response->assertRedirectContains($hash);
 
         $output_file = 'imgcache/' . $hash . '.jpg';
 
@@ -224,14 +219,13 @@ class ImagesTest extends TestCase
             'h' => $height
         ];
 
+        /** @var TestResponse $response */
         $response = $this->call('GET', '/api/images/img', array_merge($params, ['path' => $path]));
 
         // THIS is crutial becuase frontend is using the same algoritm to guess cached URL 
         $hash = sha1($path . json_encode($params));
 
-        $cachedImageUrl = $response->getTargetUrl();
-
-        $this->assertStringContainsString($hash, $cachedImageUrl);
+        $response->assertRedirectContains($hash);
 
         $output_file = 'imgcache/' . $hash . '.jpg';
 
@@ -261,14 +255,13 @@ class ImagesTest extends TestCase
             'h' => $height
         ];
 
+        /** @var TestResponse $response */
         $response = $this->call('GET', '/api/images/img', array_merge($params, ['path' => $path]));
 
         // THIS is crutial becuase frontend is using the same algoritm to guess cached URL 
         $hash = sha1($path . json_encode($params));
 
-        $cachedImageUrl = $response->getTargetUrl();
-
-        $this->assertStringContainsString($hash, $cachedImageUrl);
+        $response->assertRedirectContains($hash);
 
         $output_file = 'imgcache/' . $hash . '.jpg';
 
@@ -297,14 +290,13 @@ class ImagesTest extends TestCase
             'w' => $width
         ];
 
+        /** @var TestResponse $response */
         $response = $this->call('GET', '/api/images/img', array_merge($params, ['path' => $path]));
 
         // THIS is crutial becuase frontend is using the same algoritm to guess cached URL 
         $hash = sha1($path . json_encode($params));
 
-        $cachedImageUrl = $response->getTargetUrl();
-
-        $this->assertStringContainsString($hash, $cachedImageUrl);
+        $response->assertRedirectContains($hash);
 
         $output_file = 'imgcache/' . $hash . '.jpg';
 
@@ -334,14 +326,13 @@ class ImagesTest extends TestCase
             'w' => $width,
         ];
 
+        /** @var TestResponse $response */
         $response = $this->call('GET', '/api/images/img', array_merge($params, ['path' => $path]));
 
         // THIS is crutial becuase frontend is using the same algoritm to guess cached URL 
         $hash = sha1($path . json_encode($params));
 
-        $cachedImageUrl = $response->getTargetUrl();
-
-        $this->assertStringContainsString($hash, $cachedImageUrl);
+        $response->assertRedirectContains($hash);
 
         $output_file = 'imgcache/' . $hash . '.jpg';
 
@@ -371,14 +362,13 @@ class ImagesTest extends TestCase
             'h' => $height,
         ];
 
+        /** @var TestResponse $response */
         $response = $this->call('GET', '/api/images/img', array_merge($params, ['path' => $path]));
 
         // THIS is crutial becuase frontend is using the same algoritm to guess cached URL 
         $hash = sha1($path . json_encode($params));
 
-        $cachedImageUrl = $response->getTargetUrl();
-
-        $this->assertStringContainsString($hash, $cachedImageUrl);
+        $response->assertRedirectContains($hash);
 
         $output_file = 'imgcache/' . $hash . '.jpg';
 
