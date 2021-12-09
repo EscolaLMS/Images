@@ -2,10 +2,10 @@
 
 namespace EscolaLms\Images\Tests\Api;
 
-use Illuminate\Support\Facades\Storage;
 use EscolaLms\Images\Tests\TestCase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\TestResponse;
 
 class ImagesTest extends TestCase
