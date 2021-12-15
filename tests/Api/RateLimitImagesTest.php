@@ -26,10 +26,12 @@ class RateLimitImagesTest extends TestCase
         $app['config']->set('images.private.rate_limit_global', 0);
     }
 
-
-
     public function test_rate_limit()
     {
+        if (class_exists(\App\Providers\AppServiceProvider::class)) {
+            $this->markTestSkipped('Only call this test during separate package testing');
+        }
+
         Config::set('images.private.rate_limit_global', 0);
         Config::set('images.private.rate_limit_per_ip', 0);
 
