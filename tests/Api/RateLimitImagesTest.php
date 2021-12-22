@@ -15,22 +15,22 @@ class RateLimitImagesTest extends TestCase
         parent::setUp();
         $path = Storage::disk('local')->path('imgcache');
         File::cleanDirectory($path);
-        Config::set('images.private.rate_limit_global', 0);
-        Config::set('images.private.rate_limit_per_ip', 0);
+//        Config::set('images.private.rate_limit_global', 0);
+//        Config::set('images.private.rate_limit_per_ip', 0);
     }
 
     protected function defineEnvironment($app)
     {
         // Setup default database to use sqlite :memory:
-        $app['config']->set('images.private.rate_limit_global', 0);
-        $app['config']->set('images.private.rate_limit_global', 0);
+//        $app['config']->set('images.private.rate_limit_global', 0);
+//        $app['config']->set('images.private.rate_limit_global', 0);
     }
 
     public function test_rate_limit()
     {
-        if (class_exists(\App\Providers\AppServiceProvider::class)) {
-            $this->markTestSkipped('Only call this test during separate package testing');
-        }
+//        if (class_exists(\App\Providers\AppServiceProvider::class)) {
+//            $this->markTestSkipped('Only call this test during separate package testing');
+//        }
 
         Config::set('images.private.rate_limit_global', 0);
         Config::set('images.private.rate_limit_per_ip', 0);
@@ -42,7 +42,6 @@ class RateLimitImagesTest extends TestCase
         $storage_path = $disk->path($filename);
 
         copy($filepath, $storage_path);
-
         /** @var TestResponse $response */
         $response = $this->call('GET', '/api/images/img', ['path' => $path]);
 

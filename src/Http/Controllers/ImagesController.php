@@ -4,11 +4,11 @@ namespace EscolaLms\Images\Http\Controllers;
 
 use EscolaLms\Images\Http\Controllers\Swagger\ImagesControllerSwagger;
 use EscolaLms\Images\Services\Contracts\ImagesServiceContract;
+use Illuminate\Cache\RateLimiter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\RateLimiter;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 
 /**
@@ -32,9 +32,15 @@ class ImagesController extends Controller implements ImagesControllerSwagger
         $params = $request->except(['path']);
 
         $rate_limiter_key = 'resize-image-' . $request->ip();
-        if (RateLimiter::retriesLeft('resize-image-global-limit', config('images.private.rate_limit_global', 20)) && RateLimiter::retriesLeft($rate_limiter_key, config('images.private.rate_limit_per_ip', 5))) {
-            RateLimiter::hit('resize-image-global-limit');
-            RateLimiter::hit($rate_limiter_key);
+        $rateLimitter = app(RateLimiter::class);
+        dd(config('images.private.rate_limit_global', 20), $rateLimitter->retriesLeft('resize-image-global-limit', config('images.private.rate_limit_global', 20)),
+            $rateLimitter->retriesLeft($rate_limiter_key, config('images.private.rate_limit_per_ip', 5)));
+        if (
+            $rateLimitter->retriesLeft('resize-image-global-limit', config('images.private.rate_limit_global', 20)) &&
+            $rateLimitter->retriesLeft($rate_limiter_key, config('images.private.rate_limit_per_ip', 5))
+        ) {
+            $rateLimitter->hit('resize-image-global-limit');
+            $rateLimitter->hit($rate_limiter_key);
             $output = $this->imagesService->render($path, $params);
             return redirect($output['url']);
         }
