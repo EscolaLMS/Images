@@ -24,11 +24,6 @@ class RateLimitTest extends TestCase
 
     public function test_rate_limit()
     {
-//        if (class_exists(\App\Providers\AppServiceProvider::class)) {
-//            $this->markTestSkipped('Only call this test during separate package testing');
-//        }
-
-
         $filename = $path =  'test.jpg';
         $filepath = realpath(__DIR__ . '/' . $filename);
 
