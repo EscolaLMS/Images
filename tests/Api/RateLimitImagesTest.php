@@ -32,8 +32,6 @@ class RateLimitImagesTest extends TestCase
 //            $this->markTestSkipped('Only call this test during separate package testing');
 //        }
 
-        Config::set('images.private.rate_limit_global', 0);
-        Config::set('images.private.rate_limit_per_ip', 0);
 
         $filename = $path =  'test.jpg';
         $filepath = realpath(__DIR__ . '/' . $filename);
@@ -42,6 +40,8 @@ class RateLimitImagesTest extends TestCase
         $storage_path = $disk->path($filename);
 
         copy($filepath, $storage_path);
+        Config::set('images.private.rate_limit_global', 0);
+        Config::set('images.private.rate_limit_global', 0);
         /** @var TestResponse $response */
         $response = $this->call('GET', '/api/images/img', ['path' => $path]);
 
