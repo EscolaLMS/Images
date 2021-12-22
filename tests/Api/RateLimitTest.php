@@ -2,7 +2,6 @@
 
 namespace Api;
 
-use EscolaLms\Core\Tests\ApiTestTrait;
 use EscolaLms\Images\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Config;
@@ -12,7 +11,7 @@ use Illuminate\Testing\TestResponse;
 
 class RateLimitTest extends TestCase
 {
-    use DatabaseTransactions, ApiTestTrait;
+    use DatabaseTransactions;
 
     protected function setUp(): void
     {
