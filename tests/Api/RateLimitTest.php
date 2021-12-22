@@ -3,7 +3,6 @@
 namespace Api;
 
 use EscolaLms\Images\Tests\TestCase;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
