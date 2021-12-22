@@ -15,8 +15,8 @@ class ImagesTest extends TestCase
         parent::setUp();
         $path = Storage::disk('local')->path('imgcache');
         File::cleanDirectory($path);
-        Config::set('images.private.rate_limit_global', 100);
-        Config::set('images.private.rate_limit_per_ip', 100);
+        Config::set('images.private.rate_limit_global', 0);
+        Config::set('images.private.rate_limit_per_ip', 0);
     }
 
     public function test_image_get_redirect()
@@ -33,7 +33,7 @@ class ImagesTest extends TestCase
 
         $response = $this->call('GET', '/api/images/img', ['path' => $path]);
 
-        // THIS is crutial becuase frontend is using the same algoritm to guess cached URL 
+        // THIS is crutial becuase frontend is using the same algoritm to guess cached URL
         $hash = sha1($path . json_encode([]));
 
         $response->assertRedirectContains($hash);
@@ -83,7 +83,7 @@ class ImagesTest extends TestCase
 
         $response->assertOk();
 
-        // THIS is crutial becuase frontend is using the same algoritm to guess cached URL 
+        // THIS is crutial becuase frontend is using the same algoritm to guess cached URL
 
         $response->assertJsonFragment(['hash' => sha1($json['paths'][0]['path'] . json_encode($json['paths'][0]['params']))]);
         $response->assertJsonFragment(['hash' => sha1($json['paths'][1]['path'] . json_encode($json['paths'][1]['params']))]);
@@ -111,7 +111,7 @@ class ImagesTest extends TestCase
         /** @var TestResponse $response */
         $response = $this->call('GET', '/api/images/img', array_merge($params, ['path' => $path]));
 
-        // THIS is crutial becuase frontend is using the same algoritm to guess cached URL 
+        // THIS is crutial becuase frontend is using the same algoritm to guess cached URL
         $hash = sha1($path . json_encode($params));
 
         $response->assertRedirectContains($hash);
@@ -147,7 +147,7 @@ class ImagesTest extends TestCase
         /** @var TestResponse $response */
         $response = $this->call('GET', '/api/images/img', array_merge($params, ['path' => $path]));
 
-        // THIS is crutial becuase frontend is using the same algoritm to guess cached URL 
+        // THIS is crutial becuase frontend is using the same algoritm to guess cached URL
         $hash = sha1($path . json_encode($params));
 
         $response->assertRedirectContains($hash);
@@ -186,7 +186,7 @@ class ImagesTest extends TestCase
         /** @var TestResponse $response */
         $response = $this->call('GET', '/api/images/img', array_merge($params, ['path' => $path]));
 
-        // THIS is crutial because frontend is using the same algoritm to guess cached URL 
+        // THIS is crutial because frontend is using the same algoritm to guess cached URL
         $hash = sha1($path . json_encode($params));
 
         $response->assertRedirectContains($hash);
@@ -224,7 +224,7 @@ class ImagesTest extends TestCase
         /** @var TestResponse $response */
         $response = $this->call('GET', '/api/images/img', array_merge($params, ['path' => $path]));
 
-        // THIS is crutial becuase frontend is using the same algoritm to guess cached URL 
+        // THIS is crutial becuase frontend is using the same algoritm to guess cached URL
         $hash = sha1($path . json_encode($params));
 
         $response->assertRedirectContains($hash);
@@ -260,7 +260,7 @@ class ImagesTest extends TestCase
         /** @var TestResponse $response */
         $response = $this->call('GET', '/api/images/img', array_merge($params, ['path' => $path]));
 
-        // THIS is crutial becuase frontend is using the same algoritm to guess cached URL 
+        // THIS is crutial becuase frontend is using the same algoritm to guess cached URL
         $hash = sha1($path . json_encode($params));
 
         $response->assertRedirectContains($hash);
@@ -295,7 +295,7 @@ class ImagesTest extends TestCase
         /** @var TestResponse $response */
         $response = $this->call('GET', '/api/images/img', array_merge($params, ['path' => $path]));
 
-        // THIS is crutial becuase frontend is using the same algoritm to guess cached URL 
+        // THIS is crutial becuase frontend is using the same algoritm to guess cached URL
         $hash = sha1($path . json_encode($params));
 
         $response->assertRedirectContains($hash);
@@ -331,7 +331,7 @@ class ImagesTest extends TestCase
         /** @var TestResponse $response */
         $response = $this->call('GET', '/api/images/img', array_merge($params, ['path' => $path]));
 
-        // THIS is crutial becuase frontend is using the same algoritm to guess cached URL 
+        // THIS is crutial becuase frontend is using the same algoritm to guess cached URL
         $hash = sha1($path . json_encode($params));
 
         $response->assertRedirectContains($hash);
@@ -367,7 +367,7 @@ class ImagesTest extends TestCase
         /** @var TestResponse $response */
         $response = $this->call('GET', '/api/images/img', array_merge($params, ['path' => $path]));
 
-        // THIS is crutial becuase frontend is using the same algoritm to guess cached URL 
+        // THIS is crutial becuase frontend is using the same algoritm to guess cached URL
         $hash = sha1($path . json_encode($params));
 
         $response->assertRedirectContains($hash);
