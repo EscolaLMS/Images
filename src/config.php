@@ -2,8 +2,8 @@
 
 return [
     'private' => [
-        'rate_limit_global' => 1000,
-        'rate_limit_per_ip' => 1000,
+        'rate_limit_global' => 10,
+        'rate_limit_per_ip' => 10,
     ],
     'public' => [
         /**
@@ -12,7 +12,7 @@ return [
         'allowed_heights' => [],
         'allowed_widths' => [],
         /**
-         * Max and min sizes; 
+         * Max and min sizes;
          * if min size is not set, and requested size is less or equal to 0 it will be ignored during croping/resizing
          * if max size is not set, original image max width/height will be the constraint;
          */
