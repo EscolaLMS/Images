@@ -3,6 +3,7 @@
 namespace EscolaLms\Images\Tests\Api;
 
 use EscolaLms\Images\Tests\TestCase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -13,6 +14,7 @@ class RateLimitTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Cache::flush();
         $path = Storage::disk('local')->path('imgcache');
         File::cleanDirectory($path);
         Config::set('images.private.rate_limit_global', 0);
