@@ -2,7 +2,9 @@
 
 namespace Api;
 
+use EscolaLms\Core\Tests\ApiTestTrait;
 use EscolaLms\Images\Tests\TestCase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -10,6 +12,8 @@ use Illuminate\Testing\TestResponse;
 
 class RateLimitTest extends TestCase
 {
+    use DatabaseTransactions, ApiTestTrait;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -17,13 +21,6 @@ class RateLimitTest extends TestCase
         File::cleanDirectory($path);
         Config::set('images.private.rate_limit_global', 0);
         Config::set('images.private.rate_limit_per_ip', 0);
-    }
-
-    protected function defineEnvironment($app)
-    {
-        // Setup default database to use sqlite :memory:
-//        $app['config']->set('images.private.rate_limit_global', 0);
-//        $app['config']->set('images.private.rate_limit_global', 0);
     }
 
     public function test_rate_limit()
@@ -40,8 +37,6 @@ class RateLimitTest extends TestCase
         $storage_path = $disk->path($filename);
 
         copy($filepath, $storage_path);
-//        Config::set('images.private.rate_limit_global', 0);
-//        Config::set('images.private.rate_limit_global', 0);
         /** @var TestResponse $response */
         $response = $this->call('GET', '/api/images/img', ['path' => $path]);
 

@@ -2,7 +2,9 @@
 
 namespace Api;
 
+use EscolaLms\Core\Tests\ApiTestTrait;
 use EscolaLms\Images\Tests\TestCase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -10,6 +12,8 @@ use Illuminate\Testing\TestResponse;
 
 class ImagesTest extends TestCase
 {
+    use DatabaseTransactions, ApiTestTrait;
+
     protected function setUp(): void
     {
         parent::setUp();
