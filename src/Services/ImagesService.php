@@ -43,9 +43,9 @@ class ImagesService implements ImagesServiceContract
 
             Storage::put($output_file, $img->stream(), 'public');
 
-            if (file_exists($output_file)) {
+            if (file_exists($output_path)) {
                 $optimizerChain = OptimizerChainFactory::create();
-                $optimizerChain->optimize($output_file);
+                $optimizerChain->optimize($output_path);
             }
         }
 
