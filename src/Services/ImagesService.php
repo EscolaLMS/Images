@@ -19,24 +19,19 @@ class ImagesService implements ImagesServiceContract
     public function render($path, $params): array
     {
         $hash = sha1($path . json_encode($params));
-        $disk = Storage::disk('local');
-
-        $input_file = $disk->path($path);
         $ext = pathinfo($path)['extension'];
 
         $output_file = 'imgcache/' . $hash . '.' . $ext;
 
-        // TODO POC AWS s3
-
-        if (!$disk->exists($output_file)) {
+        if (!Storage::exists($output_file)) {
             $dir = dirname($output_file);
-            $disk->makeDirectory($dir);
-            $output_path = $disk->path($output_file);
+            Storage::makeDirectory($dir);
+            $output_path = Storage::path($output_file);
 
             // Create empty file as placeholder, so that subsequent calls wont try to resize same file
-            $disk->put($output_path, '');
+            Storage::put($output_path, '', 'public');
 
-            $img = Image::make($input_file);
+            $img = Image::make(Storage::get($path));
 
             list($width, $height) = $this->determineWidthAndHeight($img, $params);
             if (!is_null($width) || !is_null($height)) {
@@ -46,13 +41,16 @@ class ImagesService implements ImagesServiceContract
                 });
             }
 
-            $img->save($output_path);
-            $optimizerChain = OptimizerChainFactory::create();
-            $optimizerChain->optimize($output_path);
+            Storage::put($output_file, $img->stream(), 'public');
+
+            if (file_exists($output_path)) {
+                $optimizerChain = OptimizerChainFactory::create();
+                $optimizerChain->optimize($output_path);
+            }
         }
 
         return  [
-            'url' => $disk->url($output_file),
+            'url' => Storage::url($output_file),
             'path' => $output_file,
             'hash' => $hash
         ];
