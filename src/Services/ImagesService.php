@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Images\Services;
 
+use EscolaLms\Images\Enum\ConstantEnum;
 use EscolaLms\Images\Services\Contracts\ImagesServiceContract;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Constraint;
@@ -21,7 +22,7 @@ class ImagesService implements ImagesServiceContract
         $hash = sha1($path . json_encode($params));
         $ext = pathinfo($path)['extension'];
 
-        $output_file = 'imgcache/' . $hash . '.' . $ext;
+        $output_file = ConstantEnum::CACHE_DIRECTORY . DIRECTORY_SEPARATOR . $hash . '.' . $ext;
 
         if (!Storage::exists($output_file)) {
             $dir = dirname($output_file);

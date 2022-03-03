@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Images;
 
+use EscolaLms\Images\Console\ClearImagesCacheCommand;
 use Illuminate\Support\ServiceProvider;
 use EscolaLms\Images\Services\Contracts\ImagesServiceContract;
 use EscolaLms\Images\Services\ImagesService;
@@ -23,6 +24,7 @@ class EscolaLmsImagesServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
+            $this->commands(ClearImagesCacheCommand::class);
         }
     }
 
