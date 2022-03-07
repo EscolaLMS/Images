@@ -16,8 +16,10 @@ class RateLimitTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $path = Storage::disk('local')->path('imgcache');
+        Storage::fake();
+        $path = Storage::path('imgcache');
         File::cleanDirectory($path);
+        Config::set('escola_settings.use_database', true);
         Config::set('images.private.rate_limit_global', 0);
         Config::set('images.private.rate_limit_per_ip', 0);
     }
@@ -27,10 +29,9 @@ class RateLimitTest extends TestCase
         $filename = $path =  'test.jpg';
         $filepath = realpath(__DIR__ . '/' . $filename);
 
-        $disk = Storage::disk('local');
-        $storage_path = $disk->path($filename);
+        $storagePath = Storage::path($filename);
 
-        copy($filepath, $storage_path);
+        copy($filepath, $storagePath);
         /** @var TestResponse $response */
         $response = $this->call('GET', '/api/images/img', ['path' => $path]);
 
