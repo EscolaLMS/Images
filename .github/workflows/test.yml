@@ -144,4 +144,3 @@ jobs:
 
       - name: Run tests
         run: vendor/bin/phpunit
-### TODO add behat tests here
