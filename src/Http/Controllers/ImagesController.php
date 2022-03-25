@@ -17,7 +17,6 @@ use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
  */
 class ImagesController extends Controller implements ImagesControllerSwagger
 {
-    /** @var  CourseRepository */
     private ImagesServiceContract $imagesService;
 
     public function __construct(
@@ -33,6 +32,7 @@ class ImagesController extends Controller implements ImagesControllerSwagger
 
         $rate_limiter_key = 'resize-image-' . $request->ip();
         $rateLimitter = app(RateLimiter::class);
+
         if (
             $rateLimitter->retriesLeft('resize-image-global-limit', config('images.private.rate_limit_global', 20)) &&
             $rateLimitter->retriesLeft($rate_limiter_key, config('images.private.rate_limit_per_ip', 5))
@@ -40,6 +40,7 @@ class ImagesController extends Controller implements ImagesControllerSwagger
             $rateLimitter->hit('resize-image-global-limit');
             $rateLimitter->hit($rate_limiter_key);
             $output = $this->imagesService->render($path, $params);
+
             return redirect($output['url']);
         }
 
