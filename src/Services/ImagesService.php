@@ -4,6 +4,7 @@ namespace EscolaLms\Images\Services;
 
 use EscolaLms\Images\Enum\ConstantEnum;
 use EscolaLms\Images\Services\Contracts\ImagesServiceContract;
+use Exception;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Constraint;
 use Intervention\Image\Image as InterventionImage;
@@ -25,28 +26,31 @@ class ImagesService implements ImagesServiceContract
         $output_file = ConstantEnum::CACHE_DIRECTORY . DIRECTORY_SEPARATOR . $hash . '.' . $ext;
 
         if (!Storage::exists($output_file)) {
-            $dir = dirname($output_file);
-            Storage::makeDirectory($dir);
-            $output_path = Storage::path($output_file);
+            try {
+                $dir = dirname($output_file);
+                Storage::makeDirectory($dir);
+                $output_path = Storage::path($output_file);
 
-            // Create empty file as placeholder, so that subsequent calls wont try to resize same file
-            Storage::put($output_path, '', 'public');
+                // Create empty file as placeholder, so that subsequent calls wont try to resize same file
+                Storage::put($output_path, '', 'public');
+                $img = Image::make(Storage::get($path));
 
-            $img = Image::make(Storage::get($path));
+                list($width, $height) = $this->determineWidthAndHeight($img, $params);
+                if (!is_null($width) || !is_null($height)) {
+                    $img = $img->resize($width, $height, function (Constraint $constraint) {
+                        $constraint->upsize();
+                        $constraint->aspectRatio();
+                    });
+                }
 
-            list($width, $height) = $this->determineWidthAndHeight($img, $params);
-            if (!is_null($width) || !is_null($height)) {
-                $img = $img->resize($width, $height, function (Constraint $constraint) {
-                    $constraint->upsize();
-                    $constraint->aspectRatio();
-                });
-            }
+                Storage::put($output_file, $img->stream(), 'public');
 
-            Storage::put($output_file, $img->stream(), 'public');
-
-            if (file_exists($output_path)) {
-                $optimizerChain = OptimizerChainFactory::create();
-                $optimizerChain->optimize($output_path);
+                if (file_exists($output_path)) {
+                    $optimizerChain = OptimizerChainFactory::create();
+                    $optimizerChain->optimize($output_path);
+                }
+            } catch (Exception $exception) {
+                $output_file = $this->getErrorSvg($hash, $exception->getMessage());
             }
         }
 
@@ -55,6 +59,19 @@ class ImagesService implements ImagesServiceContract
             'path' => $output_file,
             'hash' => $hash
         ];
+    }
+
+    private function getErrorSvg(string $hash, string $message): string
+    {
+        $path = ConstantEnum::CACHE_DIRECTORY . DIRECTORY_SEPARATOR . $hash . '_error.svg';
+        Storage::put($path,
+            "<svg xmlns=\"http://www.w3.org/2000/svg\">
+                <style>.error { font: bold 12px monospace;  fill: red;  }</style>
+                <text x=\"1\" y=\"12\" class=\"error\">Error: ${message}</text>
+            </svg>"
+        );
+
+        return $path;
     }
 
     private function determineWidthAndHeight(InterventionImage $img, array $params): array
