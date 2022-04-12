@@ -21,7 +21,7 @@ class ImagesService implements ImagesServiceContract
     public function render($path, $params): array
     {
         $hash = sha1($path . json_encode($params));
-        $ext = pathinfo($path)['extension'];
+        $ext = pathinfo($path)['extension'] ?? null;
 
         $output_file = ConstantEnum::CACHE_DIRECTORY . DIRECTORY_SEPARATOR . $hash . '.' . $ext;
 
