@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Images;
 
+use EscolaLms\Core\EscolaLmsServiceProvider;
 use EscolaLms\Images\Console\ClearImagesCacheCommand;
 use Illuminate\Support\ServiceProvider;
 use EscolaLms\Images\Services\Contracts\ImagesServiceContract;
@@ -26,6 +27,7 @@ class EscolaLmsImagesServiceProvider extends ServiceProvider
             $this->bootForConsole();
             $this->commands(ClearImagesCacheCommand::class);
         }
+        $this->app->register(EscolaLmsServiceProvider::class);
     }
 
     protected function bootForConsole(): void
