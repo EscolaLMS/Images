@@ -10,3 +10,4 @@ providers:
   - EscolaLms\Core\EscolaLmsServiceProvider
   - EscolaLms\Images\EscolaLmsImagesServiceProvider
   - Laravel\Passport\PassportServiceProvider
+  - Spatie\Permission\PermissionServiceProvider
