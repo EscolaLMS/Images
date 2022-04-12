@@ -9,3 +9,4 @@ env:
 providers:
   - EscolaLms\Core\EscolaLmsServiceProvider
   - EscolaLms\Images\EscolaLmsImagesServiceProvider
+  - EscolaLms\Permissions\EscolaLmsPermissionsServiceProvider
