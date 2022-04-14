@@ -69,7 +69,7 @@ class ImagesService implements ImagesServiceContract
                 <style>.error { font: bold 12px monospace;  fill: red;  }</style>
                 <text x=\"1\" y=\"12\" class=\"error\">Error: ${message}</text>
             </svg>"
-        );
+        , 'public');
 
         return $path;
     }
