@@ -66,10 +66,10 @@ class ImagesService implements ImagesServiceContract
         $path = ConstantEnum::CACHE_DIRECTORY . DIRECTORY_SEPARATOR . $hash . '_error.svg';
         Storage::put($path,
             "<svg xmlns=\"http://www.w3.org/2000/svg\">
-                <style>.error { font: bold 12px monospace;  fill: red;  }</style>
-                <text x=\"1\" y=\"12\" class=\"error\">Error: ${message}</text>
-            </svg>"
-        , 'public');
+                        <style>.error { font: bold 12px monospace;  fill: red;  }</style>
+                        <text x=\"1\" y=\"12\" class=\"error\">Error: ${message}</text>
+                      </svg>",
+            'public');
 
         return $path;
     }
