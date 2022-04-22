@@ -95,6 +95,21 @@ class ImagesTest extends TestCase
         Storage::assertExists('imgcache/' . $this->getHash($json, 0) . '.jpg');
         Storage::assertExists('imgcache/' . $this->getHash($json, 1) . '.jpg');
         Storage::assertExists('imgcache/' . $this->getHash($json, 2) . '.jpg');
+
+        $this->assertDatabaseHas('image_caches', [
+            'path' => 'test.jpg',
+            'hash_path' => 'imgcache/' . $this->getHash($json, 0) . '.jpg',
+        ]);
+
+        $this->assertDatabaseHas('image_caches', [
+            'path' => 'test.jpg',
+            'hash_path' => 'imgcache/' . $this->getHash($json, 1) . '.jpg',
+        ]);
+
+        $this->assertDatabaseHas('image_caches', [
+            'path' => 'test.jpg',
+            'hash_path' => 'imgcache/' . $this->getHash($json, 2) . '.jpg',
+        ]);
     }
 
     public function test_invalid_image_get_redirect(): void

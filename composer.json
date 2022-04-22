@@ -24,7 +24,8 @@
   "autoload": {
     "psr-4": {
       "EscolaLms\\Images\\": "src",
-      "EscolaLms\\Images\\Tests\\": "tests"
+      "EscolaLms\\Images\\Tests\\": "tests",
+      "EscolaLms\\Images\\Database\\Factories\\": "database/factories"
     }
   },
   "extra": {
