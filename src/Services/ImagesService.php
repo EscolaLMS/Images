@@ -3,6 +3,7 @@
 namespace EscolaLms\Images\Services;
 
 use EscolaLms\Images\Enum\ConstantEnum;
+use EscolaLms\Images\Repositories\Contracts\ImageCacheRepositoryContract;
 use EscolaLms\Images\Services\Contracts\ImagesServiceContract;
 use Exception;
 use Illuminate\Support\Facades\Storage;
@@ -13,6 +14,13 @@ use Spatie\ImageOptimizer\OptimizerChainFactory;
 
 class ImagesService implements ImagesServiceContract
 {
+    private ImageCacheRepositoryContract $imageCacheRepository;
+
+    public function __construct(ImageCacheRepositoryContract $imageCacheRepository)
+    {
+        $this->imageCacheRepository = $imageCacheRepository;
+    }
+
     public function images(array $paths): array
     {
         return array_map(fn ($path) => $this->render($path['path'], $path['params'] ?? []), $paths);
@@ -49,6 +57,12 @@ class ImagesService implements ImagesServiceContract
                     $optimizerChain = OptimizerChainFactory::create();
                     $optimizerChain->optimize($output_path);
                 }
+
+                $this->imageCacheRepository->create([
+                    'path' => $path,
+                    'hash_path' => $output_file,
+                ]);
+
             } catch (Exception $exception) {
                 $output_file = $this->getErrorSvg($hash, $exception->getMessage());
             }
@@ -59,6 +73,18 @@ class ImagesService implements ImagesServiceContract
             'path' => $output_file,
             'hash' => $hash
         ];
+    }
+
+    public function clearImageCacheByPath(string $path): void
+    {
+        $imageCaches = $this->imageCacheRepository->all([
+            'path' => $path
+        ]);
+
+        foreach ($imageCaches as $imageCache) {
+            Storage::delete($imageCache->hash_path);
+            $this->imageCacheRepository->delete($imageCache->getKey());
+        }
     }
 
     private function getErrorSvg(string $hash, string $message): string
