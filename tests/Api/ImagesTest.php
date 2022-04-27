@@ -2,9 +2,11 @@
 
 namespace Api;
 
+use EscolaLms\Images\Events\FileStored;
 use EscolaLms\Images\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\TestResponse;
@@ -54,6 +56,7 @@ class ImagesTest extends TestCase
 
     public function test_image_post_results(): void
     {
+        Event::fake([FileStored::class]);
         $filename = 'test.jpg';
         $filepath = realpath(__DIR__ . '/' . $filename);
 
@@ -110,6 +113,8 @@ class ImagesTest extends TestCase
             'path' => 'test.jpg',
             'hash_path' => 'imgcache/' . $this->getHash($json, 2) . '.jpg',
         ]);
+
+        Event::assertDispatched(FileStored::class);
     }
 
     public function test_invalid_image_get_redirect(): void
@@ -136,6 +141,7 @@ class ImagesTest extends TestCase
 
     public function test_invalid_image_post_results(): void
     {
+        Event::fake([FileStored::class]);
         $disk = Storage::disk('local');
 
         $invalidFileName = 'invalid.jpg';
@@ -183,6 +189,7 @@ class ImagesTest extends TestCase
         Storage::assertExists('imgcache/' . $this->getHash($json, 0) . '.jpg');
         Storage::assertExists('imgcache/' . $this->getHash($json, 1) . '_error.svg');
         Storage::assertExists('imgcache/' . $this->getHash($json, 2) . '.jpg');
+        Event::assertDispatched(FileStored::class);
     }
 
     public function test_max_width(): void
