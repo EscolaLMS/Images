@@ -2,8 +2,8 @@
 
 namespace EscolaLms\Images\Feature;
 
+use EscolaLms\Images\Enum\ConstantEnum;
 use EscolaLms\Images\Models\ImageCache;
-use EscolaLms\Images\Tests\Mock\TestImageChanged;
 use EscolaLms\Images\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
@@ -19,34 +19,47 @@ class ClearImageCacheTest extends TestCase
         Storage::fake();
     }
 
-    public function testClearImageCacheByPath(): void
+    public function testClearImageCacheAfterDelete(): void
     {
         $img = UploadedFile::fake()->image('img.png');
-        $hashPath1 = $img->storeAs('/', sha1('hash_path_img1.png'));
-        $hashPath2 = $img->storeAs('/', 'hash_path_img2.png');
+        $path = $img->store('test');
+        $hashPath = $img->storeAs(ConstantEnum::CACHE_DIRECTORY, sha1('hash_path_img1.png'));
 
         ImageCache::factory()->create([
-            'path' => 'img.png',
-            'hash_path' => $hashPath1,
+            'path' => $path,
+            'hash_path' => $hashPath,
         ]);
 
-        ImageCache::factory()->create([
-            'path' => 'img.png',
-            'hash_path' => $hashPath2,
-        ]);
+        Storage::assertExists($path);
+        Storage::assertExists($hashPath);
 
-        Storage::assertExists($hashPath1);
-        Storage::assertExists($hashPath2);
-        $this->assertDatabaseHas('image_caches', [
-            'path' => 'img.png',
-        ]);
+        Storage::delete($path);
 
-        event(new TestImageChanged('img.png'));
-
-        Storage::assertMissing($hashPath1);
-        Storage::assertMissing($hashPath2);
+        Storage::assertMissing($hashPath);
         $this->assertDatabaseMissing('image_caches', [
-            'path' => 'img.png',
+            'path' => $path,
+        ]);
+    }
+
+    public function testClearImageCacheByDirectory(): void
+    {
+        $img = UploadedFile::fake()->image('img.png');
+        $path = $img->store('test');
+        $hashPath = $img->storeAs(ConstantEnum::CACHE_DIRECTORY, sha1('hash_path_img1.png'));
+
+        ImageCache::factory()->create([
+            'path' => $path,
+            'hash_path' => $hashPath,
+        ]);
+
+        Storage::assertExists($path);
+        Storage::assertExists($hashPath);
+
+        Storage::put('test', $img);
+
+        Storage::assertMissing($hashPath);
+        $this->assertDatabaseMissing('image_caches', [
+            'path' => $path,
         ]);
     }
 }

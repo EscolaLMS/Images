@@ -7,6 +7,7 @@ use EscolaLms\Images\Console\ClearImagesCacheCommand;
 use EscolaLms\Images\Providers\EventServiceProviders;
 use EscolaLms\Images\Repositories\Contracts\ImageCacheRepositoryContract;
 use EscolaLms\Images\Repositories\ImageCacheRepository;
+use EscolaLms\Images\Services\CustomFilesystemManager;
 use Illuminate\Support\ServiceProvider;
 use EscolaLms\Images\Services\Contracts\ImagesServiceContract;
 use EscolaLms\Images\Services\ImagesService;
@@ -39,6 +40,10 @@ class EscolaLmsImagesServiceProvider extends ServiceProvider
             $this->commands(ClearImagesCacheCommand::class);
         }
         $this->app->register(EscolaLmsServiceProvider::class);
+
+        $this->app->extend('filesystem', function ($service, $app) {
+            return new CustomFilesystemManager($app);
+        });
     }
 
     protected function bootForConsole(): void

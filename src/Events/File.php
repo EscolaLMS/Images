@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Images\Tests\Mock;
+namespace EscolaLms\Images\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class TestImageChanged
+class File
 {
     use Dispatchable, SerializesModels;
 

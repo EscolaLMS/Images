@@ -2,7 +2,10 @@
 
 namespace EscolaLms\Images\Services;
 
+use EscolaLms\Core\Repositories\Criteria\Primitives\LikeCriterion;
+use EscolaLms\Core\Repositories\Criteria\Primitives\WhereNotInOrIsNullCriterion;
 use EscolaLms\Images\Enum\ConstantEnum;
+use EscolaLms\Images\Models\ImageCache;
 use EscolaLms\Images\Repositories\Contracts\ImageCacheRepositoryContract;
 use EscolaLms\Images\Services\Contracts\ImagesServiceContract;
 use Exception;
@@ -75,10 +78,10 @@ class ImagesService implements ImagesServiceContract
         ];
     }
 
-    public function clearImageCacheByPath(string $path): void
+    public function clearImageCacheByDirectory(string $path): void
     {
-        $imageCaches = $this->imageCacheRepository->all([
-            'path' => $path
+        $imageCaches = $this->imageCacheRepository->searchByCriteria([
+            new LikeCriterion('path', str_replace(basename($path), '', $path)),
         ]);
 
         foreach ($imageCaches as $imageCache) {
