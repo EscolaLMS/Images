@@ -3,9 +3,7 @@
 namespace EscolaLms\Images\Services;
 
 use EscolaLms\Core\Repositories\Criteria\Primitives\LikeCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\WhereNotInOrIsNullCriterion;
 use EscolaLms\Images\Enum\ConstantEnum;
-use EscolaLms\Images\Models\ImageCache;
 use EscolaLms\Images\Repositories\Contracts\ImageCacheRepositoryContract;
 use EscolaLms\Images\Services\Contracts\ImagesServiceContract;
 use Exception;
