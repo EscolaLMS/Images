@@ -6,11 +6,23 @@ use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Images\Enum\PackageStatusEnum;
 use EscolaLms\Images\Providers\SettingsServiceProvider;
 use EscolaLms\Images\Tests\TestCase;
+use EscolaLms\Settings\Database\Seeders\PermissionTableSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class SettingsTest extends TestCase
 {
     use CreatesUsers, DatabaseTransactions;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (!class_exists(\EscolaLms\Settings\EscolaLmsSettingsServiceProvider::class)) {
+            $this->markTestSkipped('Settings package not installed');
+        }
+
+        $this->seed(PermissionTableSeeder::class);
+    }
 
     public function testAdministrableConfigApi(): void
     {
