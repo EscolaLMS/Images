@@ -4,12 +4,10 @@ namespace EscolaLms\Images\Http\Controllers;
 
 use EscolaLms\Images\Http\Controllers\Swagger\ImagesControllerSwagger;
 use EscolaLms\Images\Services\Contracts\ImagesServiceContract;
-use Illuminate\Cache\RateLimiter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 
 /**
  * Class CourseController
@@ -29,22 +27,9 @@ class ImagesController extends Controller implements ImagesControllerSwagger
     {
         $path = $request->get('path');
         $params = $request->except(['path']);
+        $output = $this->imagesService->render($path, $params);
 
-        $rate_limiter_key = 'resize-image-' . $request->ip();
-        $rateLimitter = app(RateLimiter::class);
-
-        if (
-            $rateLimitter->retriesLeft('resize-image-global-limit', config('images.private.rate_limit_global', 20)) &&
-            $rateLimitter->retriesLeft($rate_limiter_key, config('images.private.rate_limit_per_ip', 5))
-        ) {
-            $rateLimitter->hit('resize-image-global-limit');
-            $rateLimitter->hit($rate_limiter_key);
-            $output = $this->imagesService->render($path, $params);
-
-            return redirect($output['url']);
-        }
-
-        throw new TooManyRequestsHttpException();
+        return redirect($output['url']);
     }
 
     public function images(Request $request): JsonResponse

@@ -1,9 +1,13 @@
 <?php
 
+use EscolaLms\Images\Enum\ConstantEnum;
+use EscolaLms\Images\Enum\PackageStatusEnum;
+
 return [
     'private' => [
-        'rate_limit_global' => 1000000,
-        'rate_limit_per_ip' => 1000,
+        'rate_limit_global' => ConstantEnum::RATE_LIMIT_GLOBAL,
+        'rate_limit_per_ip' => ConstantEnum::RATE_LIMIT_PER_IP,
+        'rate_limiter_status' => PackageStatusEnum::ENABLED,
     ],
     'public' => [
         /**
