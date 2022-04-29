@@ -56,7 +56,6 @@ class ImagesTest extends TestCase
 
     public function test_image_post_results(): void
     {
-        Event::fake([FileStored::class]);
         $filename = 'test.jpg';
         $filepath = realpath(__DIR__ . '/' . $filename);
 
@@ -113,8 +112,6 @@ class ImagesTest extends TestCase
             'path' => 'test.jpg',
             'hash_path' => 'imgcache/' . $this->getHash($json, 2) . '.jpg',
         ]);
-
-        Event::assertDispatched(FileStored::class);
     }
 
     public function test_invalid_image_get_redirect(): void

@@ -4,9 +4,11 @@ namespace EscolaLms\Images\Services;
 
 use EscolaLms\Core\Repositories\Criteria\Primitives\LikeCriterion;
 use EscolaLms\Images\Enum\ConstantEnum;
+use EscolaLms\Images\Events\FileStored;
 use EscolaLms\Images\Repositories\Contracts\ImageCacheRepositoryContract;
 use EscolaLms\Images\Services\Contracts\ImagesServiceContract;
 use Exception;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Constraint;
 use Intervention\Image\Image as InterventionImage;
@@ -36,6 +38,7 @@ class ImagesService implements ImagesServiceContract
 
         if (!Storage::exists($output_file)) {
             try {
+                Event::forget(FileStored::class);
                 $dir = dirname($output_file);
                 Storage::makeDirectory($dir);
                 $output_path = Storage::path($output_file);
