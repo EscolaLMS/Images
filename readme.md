@@ -9,6 +9,8 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/7dfeae0462e3599797bf/maintainability)](https://codeclimate.com/github/EscolaLMS/Images/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/7dfeae0462e3599797bf/test_coverage)](https://codeclimate.com/github/EscolaLMS/Images/test_coverage)
 
+## What does it do
+
 The package creates resized images from source by given parameters. This is a headless approach so the backend doesn't know the requested sizes before frontend requests any. 
 
 The input images are stored by Laravel in any of available disk (local storage/s3/any bucket). Once a resized version is requested a cached version in created and returend. Below are examples to show the overall idea. 
@@ -19,11 +21,20 @@ After inital resized all the images are optimized with [image-optimizer](https:/
 
 For best results binaries must [be installed](https://github.com/spatie/image-optimizer#optimization-tools). EscolaLMS prepared [Docker Images](https://hub.docker.com/r/escolalms/php) are available for development (tag `work`) and production (tag `prod`).
 
-There is API endpoints documentation [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/Images/)
-
 ## Installation
 
-`composer require escolalms/images`
+- `composer require escolalms/images`
+- `php artisan migrate`
+
+## Database
+
+- `image_caches` - table for saving the original and resized image path
+
+| id | path | hash\_path | created\_at | updated\_at |
+| :--- | :--- | :--- | :--- | :--- |
+| 1 | avatars/1/avatar.jpg | imgcache/68840270724ee4ff0b481f4fbd2299e13dfe2447.jpg | 2022-05-05 11:29:04 | 2022-05-05 11:29:04 |
+| 3 | avatars/4/avatar4.jpg | imgcache/d0f1ab43ae7f2924682b2ce734a24fa7066a8ea7.jpg | 2022-05-05 11:30:49 | 2022-05-05 11:30:49 |
+| 2 | avatars/2/avatar2.jpg | imgcache/94c6c83db6562161d38620a74e4e07fb3d9e39ed.jpg | 2022-05-05 11:30:39 | 2022-05-05 11:30:39 |
 
 ## Examples
 
@@ -108,19 +119,48 @@ then result URL would be
 $output_file = $url_prefix.$hash.$extension;
 ```
 
-## Frontend implmementation 
+## Endpoint 
 
-Below is our totally **headless** approach on generating images 
+There is API endpoints documentation [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/Images/)
 
-The following example tries to achives 2 purposes 
+## Tests
+
+Run `./vendor/bin/phpunit` to run tests.
+
+Test details
+[![codecov](https://codecov.io/gh/EscolaLMS/Images/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/EscolaLMS/Images)
+[![phpunit](https://github.com/EscolaLMS/Images/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Courses/actions/workflows/test.yml)
+
+## Events
+
+This package extends `filesystem`.
+
+```
+$this->app->extend('filesystem', function ($service, $app) {
+    return new CustomFilesystemManager($app);
+});
+```
+
+1. `FileDeleted` - The event is dispatched when you use `delete` method on the `Storage` facade.
+2. `FileStored` - The event is dispatched when you use `put`, `putFile` or `putFileAs` method.
+
+## Listeners
+
+This package listens for `FileDeleted` and `FileStored` events and removes the resized images from the given path.
+
+## How to use this on frontend
+
+Below is our totally **headless** approach on generating images
+
+The following example tries to achives 2 purposes
 - generate image on fly, frontend decide what sizes are needed
-- images are not served by API 
+- images are not served by API
 
-The idea is that since we know tha hashing algoritm for cached images we can guess that the URL will be like. 
-If that URL is throwing 404 then we're calling the API endpoint to generate one. 
-Fortunately this endpoint creates an requested image, caches it and returns redirect which is good for image src. 
+The idea is that since we know tha hashing algoritm for cached images we can guess that the URL will be like.
+If that URL is throwing 404 then we're calling the API endpoint to generate one.
+Fortunately this endpoint creates an requested image, caches it and returns redirect which is good for image src.
 
-A major disadvantage of this approach is that first user once will get 404 in networking and experince few seconds delay before image is rendered after not founded. 
+A major disadvantage of this approach is that first user once will get 404 in networking and experince few seconds delay before image is rendered after not founded.
 
 ```html
 <script type="text/javascript" src="sha1.js"></script>
@@ -165,4 +205,4 @@ A major disadvantage of this approach is that first user once will get 404 in ne
 </script> 
 ```
 
-Working example is availabe in [doc](doc) folder. 
+Working example is availabe in [doc](doc) folder.
