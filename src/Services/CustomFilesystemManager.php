@@ -32,7 +32,7 @@ class CustomFilesystemManager extends FilesystemManager
         return $result;
     }
 
-    public function putFile(string $path, $file, array $options = [])
+    public function putFile(string $path, $file, $options = [])
     {
         $result = parent::putFile($path, $file, $options);
         $this->dispatchEventAfterPut($result);
@@ -40,7 +40,7 @@ class CustomFilesystemManager extends FilesystemManager
         return $result;
     }
 
-    public function putFileAs(string $path, $file, $name, array $options = [])
+    public function putFileAs(string $path, $file, $name, $options = [])
     {
         $result = parent::putFileAs($path, $file, $name, $options);
         $this->dispatchEventAfterPut($result);
