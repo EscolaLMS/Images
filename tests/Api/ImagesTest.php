@@ -480,6 +480,22 @@ class ImagesTest extends TestCase
         $this->assertNotEquals($height, $sizes[1]);
     }
 
+    public function test_convert_jpg_to_webp(): void
+    {
+        $filename = 'test.jpg';
+        $filepath = realpath(__DIR__ . '/' . $filename);
+
+        $disk = Storage::disk('local');
+        $storage_path = $disk->path($filename);
+
+        copy($filepath, $storage_path);
+
+        $response = $this->getJson('/api/images/img?format=webp&path=' . $filename);
+
+        $hash = sha1($filename . json_encode(['format' => 'webp']));
+        $response->assertRedirectContains($hash . '.webp');
+    }
+
     private function getHash($json, $index): string
     {
         return sha1($json['paths'][$index]['path'] . json_encode($json['paths'][$index]['params']));
