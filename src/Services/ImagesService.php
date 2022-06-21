@@ -4,6 +4,7 @@ namespace EscolaLms\Images\Services;
 
 use EscolaLms\Core\Repositories\Criteria\Primitives\LikeCriterion;
 use EscolaLms\Images\Enum\ConstantEnum;
+use EscolaLms\Images\Enum\SupportedFormatsEnum;
 use EscolaLms\Images\Events\FileStored;
 use EscolaLms\Images\Repositories\Contracts\ImageCacheRepositoryContract;
 use EscolaLms\Images\Services\Contracts\ImagesServiceContract;
@@ -34,6 +35,10 @@ class ImagesService implements ImagesServiceContract
         $hash = sha1($path . json_encode($params));
         $ext = pathinfo($path)['extension'] ?? null;
 
+        if (isset($params['format']) && in_array($params['format'], SupportedFormatsEnum::getValues())) {
+            $ext = $params['format'];
+        }
+
         $output_file = ConstantEnum::CACHE_DIRECTORY . DIRECTORY_SEPARATOR . $hash . '.' . $ext;
 
         if (!Storage::exists($output_file)) {
@@ -45,7 +50,7 @@ class ImagesService implements ImagesServiceContract
 
                 // Create empty file as placeholder, so that subsequent calls wont try to resize same file
                 Storage::put($output_path, '', 'public');
-                $img = Image::make(Storage::get($path));
+                $img = Image::make(Storage::get($path))->encode($ext);
 
                 list($width, $height) = $this->determineWidthAndHeight($img, $params);
                 if (!is_null($width) || !is_null($height)) {

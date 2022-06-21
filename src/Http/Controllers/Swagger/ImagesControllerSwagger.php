@@ -47,6 +47,13 @@ interface ImagesControllerSwagger
      *             default="100",
      *         )
      *     ),
+     *     @OA\Parameter(
+     *         name="format",
+     *         in="query",
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="resized file operation",

@@ -2,9 +2,11 @@
 
 namespace Api;
 
+use EscolaLms\Images\Enum\ConstantEnum;
 use EscolaLms\Images\Events\FileStored;
 use EscolaLms\Images\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
@@ -478,6 +480,21 @@ class ImagesTest extends TestCase
 
         $this->assertEquals($allowed_height, $sizes[1]);
         $this->assertNotEquals($height, $sizes[1]);
+    }
+
+    public function test_convert_jpg_to_webp(): void
+    {
+        Storage::fake();
+
+        $fileName = 'test.jpg';
+        UploadedFile::fake()->image($fileName)->storeAs('/', $fileName);
+
+        $response = $this->getJson('/api/images/img?format=webp&path=' . $fileName);
+
+        $hash = sha1($fileName . json_encode(['format' => 'webp']));
+        $response->assertRedirectContains($hash);
+
+        Storage::assertExists(ConstantEnum::CACHE_DIRECTORY . DIRECTORY_SEPARATOR . $hash . '.webp');
     }
 
     private function getHash($json, $index): string
