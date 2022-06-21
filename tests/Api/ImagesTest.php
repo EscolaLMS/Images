@@ -492,9 +492,7 @@ class ImagesTest extends TestCase
         $response = $this->getJson('/api/images/img?format=webp&path=' . $fileName);
 
         $hash = sha1($fileName . json_encode(['format' => 'webp']));
-        $response->assertRedirectContains($hash);
-
-        Storage::assertExists(ConstantEnum::CACHE_DIRECTORY . DIRECTORY_SEPARATOR . $hash . '.webp');
+        $response->assertRedirectContains($hash . '.webp');
     }
 
     private function getHash($json, $index): string
