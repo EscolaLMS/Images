@@ -6,7 +6,7 @@ jobs:
   php8-laravel-latest-phpunit-mysql:
     runs-on: ubuntu-latest
     container:
-      image: escolalms/php:8
+      image: escolalms/php:8-work
 
     services:
       mysql:
