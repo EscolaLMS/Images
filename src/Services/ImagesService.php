@@ -73,7 +73,6 @@ class ImagesService implements ImagesServiceContract
                 ]);
 
             } catch (Exception $exception) {
-                dump($exception->getMessage());
                 $output_file = $this->getErrorSvg($hash, $exception->getMessage());
             }
         }
