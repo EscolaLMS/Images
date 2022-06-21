@@ -2,11 +2,9 @@
 
 namespace Api;
 
-use EscolaLms\Images\Enum\ConstantEnum;
 use EscolaLms\Images\Events\FileStored;
 use EscolaLms\Images\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
@@ -484,14 +482,17 @@ class ImagesTest extends TestCase
 
     public function test_convert_jpg_to_webp(): void
     {
-        Storage::fake();
+        $filename = 'test.jpg';
+        $filepath = realpath(__DIR__ . '/' . $filename);
 
-        $fileName = 'test.jpg';
-        UploadedFile::fake()->image($fileName)->storeAs('/', $fileName);
+        $disk = Storage::disk('local');
+        $storage_path = $disk->path($filename);
 
-        $response = $this->getJson('/api/images/img?format=webp&path=' . $fileName);
+        copy($filepath, $storage_path);
 
-        $hash = sha1($fileName . json_encode(['format' => 'webp']));
+        $response = $this->getJson('/api/images/img?format=webp&path=' . $filename);
+
+        $hash = sha1($filename . json_encode(['format' => 'webp']));
         $response->assertRedirectContains($hash . '.webp');
     }
 
