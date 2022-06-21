@@ -36,6 +36,13 @@
                             "type": "int",
                             "default": "100"
                         }
+                    },
+                    {
+                        "name": "format",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
