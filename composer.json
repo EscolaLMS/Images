@@ -29,6 +29,11 @@
       "EscolaLms\\Images\\Database\\Factories\\": "database/factories"
     }
   },
+  "config": {
+    "allow-plugins": {
+      "php-http/discovery": true
+    }
+  },
   "extra": {
     "laravel": {
       "providers": [
