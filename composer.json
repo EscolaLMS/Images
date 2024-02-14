@@ -6,8 +6,8 @@
     "php": ">=7.4",
     "laravel/framework": ">=8.0",
     "escolalms/core": "^1",
-    "intervention/image": "^3",
-    "intervention/imagecache": "^3",
+    "intervention/image": "^2",
+    "intervention/imagecache": "^2",
     "spatie/laravel-image-optimizer": "^1.7",
     "escolalms/settings": "^0"
   },
