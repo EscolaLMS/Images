@@ -16,7 +16,7 @@ class ClearImagesCacheCommand extends Command
         parent::__construct();
     }
 
-    public function handle()
+    public function handle(): void
     {
         Storage::deleteDirectory(ConstantEnum::CACHE_DIRECTORY);
         $this->info('Images cache cleared!');

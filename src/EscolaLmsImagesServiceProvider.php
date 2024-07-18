@@ -29,16 +29,19 @@ class EscolaLmsImagesServiceProvider extends ServiceProvider
         ImageCacheRepositoryContract::class => ImageCacheRepository::class,
     ];
 
-    public $singletons = self::SERVICES + self::REPOSITORIES;
+    /**
+     * @var array<class-string, class-string>
+     */
+    public array $singletons = self::SERVICES + self::REPOSITORIES;
 
-    public function register()
+    public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/config.php', 'images');
         $this->app->register(EventServiceProviders::class);
         $this->app->register(SettingsServiceProvider::class);
     }
 
-    public function boot()
+    public function boot(): void
     {
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
@@ -55,9 +58,13 @@ class EscolaLmsImagesServiceProvider extends ServiceProvider
 
         RateLimiter::for('images.render', function (Request $request) {
             if (Config::get('images.private.rate_limiter_status') === PackageStatusEnum::ENABLED) {
+                /** @var int $per_limit_global */
+                $per_limit_global = Config::get('images.private.rate_limit_global', ConstantEnum::RATE_LIMIT_GLOBAL);
+                /** @var int $per_limit_per_ip */
+                $per_limit_per_ip = Config::get('images.private.rate_limit_per_ip', ConstantEnum::RATE_LIMIT_PER_IP);
                 return [
-                    Limit::perMinute(Config::get('images.private.rate_limit_global', ConstantEnum::RATE_LIMIT_GLOBAL)),
-                    Limit::perMinute(Config::get('images.private.rate_limit_per_ip', ConstantEnum::RATE_LIMIT_PER_IP))->by($request->ip()),
+                    Limit::perMinute($per_limit_global),
+                    Limit::perMinute($per_limit_per_ip)->by($request->ip()),
                 ];
             }
 

@@ -6,9 +6,11 @@ use EscolaLms\Core\Repositories\Criteria\Primitives\LikeCriterion;
 use EscolaLms\Images\Enum\ConstantEnum;
 use EscolaLms\Images\Enum\SupportedFormatsEnum;
 use EscolaLms\Images\Events\FileStored;
+use EscolaLms\Images\Models\ImageCache;
 use EscolaLms\Images\Repositories\Contracts\ImageCacheRepositoryContract;
 use EscolaLms\Images\Services\Contracts\ImagesServiceContract;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Constraint;
@@ -25,12 +27,21 @@ class ImagesService implements ImagesServiceContract
         $this->imageCacheRepository = $imageCacheRepository;
     }
 
+    /**
+     * @param array<string, array<string, string|array<string, string>>> $paths
+     * @return array<string, array<string, string>>
+     */
     public function images(array $paths): array
     {
+        // @phpstan-ignore-next-line
         return array_map(fn ($path) => $this->render($path['path'], $path['params'] ?? []), $paths);
     }
 
-    public function render($path, $params): array
+    /**
+     * @param array<string, string> $params
+     * @return array<string, string>
+     */
+    public function render(string $path, $params): array
     {
         $hash = sha1($path . json_encode($params));
         $ext = pathinfo($path)['extension'] ?? null;
@@ -86,13 +97,17 @@ class ImagesService implements ImagesServiceContract
 
     public function clearImageCacheByDirectory(string $path): void
     {
+        /** @var Collection<int, ImageCache> $imageCaches */
         $imageCaches = $this->imageCacheRepository->searchByCriteria([
             new LikeCriterion('path', str_replace(basename($path), '', $path)),
         ]);
 
+        /** @var ImageCache $imageCache */
         foreach ($imageCaches as $imageCache) {
             Storage::delete($imageCache->hash_path);
-            $this->imageCacheRepository->delete($imageCache->getKey());
+            /** @var int $id */
+            $id = $imageCache->getKey();
+            $this->imageCacheRepository->delete($id);
         }
     }
 
@@ -109,6 +124,10 @@ class ImagesService implements ImagesServiceContract
         return $path;
     }
 
+    /**
+     * @param array<string, string> $params
+     * @return int[]|null[]
+     */
     private function determineWidthAndHeight(InterventionImage $img, array $params): array
     {
         if (isset($params['size'])) {
@@ -129,7 +148,7 @@ class ImagesService implements ImagesServiceContract
         return [null, null];
     }
 
-    private function determineWidth(InterventionImage $img, $width): ?int
+    private function determineWidth(InterventionImage $img, string|int|null $width): ?int
     {
         if (is_null($width)) {
             return null;
@@ -151,7 +170,7 @@ class ImagesService implements ImagesServiceContract
         return $width === 0 ? null : $width;
     }
 
-    private function determineHeight(InterventionImage $img, $height): ?int
+    private function determineHeight(InterventionImage $img, string|int|null $height): ?int
     {
         if (is_null($height)) {
             return null;

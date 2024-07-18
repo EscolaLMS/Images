@@ -2,6 +2,8 @@
 
 namespace EscolaLms\Images\Repositories\Contracts;
 
-interface ImageCacheRepositoryContract
+use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
+
+interface ImageCacheRepositoryContract extends BaseRepositoryContract
 {
 }
