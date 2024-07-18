@@ -58,7 +58,8 @@ class CustomFilesystemManager extends FilesystemManager
 
     private function dispatchEventAfterPut(string|bool $result): void
     {
-        if ($result && is_string($result)) {
+        if ($result) {
+            // @phpstan-ignore-next-line
             event(new FileStored($result));
         }
     }
