@@ -28,11 +28,12 @@ class ImagesService implements ImagesServiceContract
     }
 
     /**
-     * @param array<string, array<string, string>> $paths
+     * @param array<string, array<string, string|array<string, string>>> $paths
      * @return array<string, array<string, string>>
      */
     public function images(array $paths): array
     {
+        // @phpstan-ignore-next-line
         return array_map(fn ($path) => $this->render($path['path'], $path['params'] ?? []), $paths);
     }
 
@@ -104,7 +105,9 @@ class ImagesService implements ImagesServiceContract
         /** @var ImageCache $imageCache */
         foreach ($imageCaches as $imageCache) {
             Storage::delete($imageCache->hash_path);
-            $this->imageCacheRepository->delete($imageCache->getKey());
+            /** @var int $id */
+            $id = $imageCache->getKey();
+            $this->imageCacheRepository->delete($id);
         }
     }
 
