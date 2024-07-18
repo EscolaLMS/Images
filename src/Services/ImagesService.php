@@ -25,11 +25,19 @@ class ImagesService implements ImagesServiceContract
         $this->imageCacheRepository = $imageCacheRepository;
     }
 
+    /**
+     * @param array<int, array<string, string>> $paths
+     * @return array<int, string>
+     */
     public function images(array $paths): array
     {
         return array_map(fn ($path) => $this->render($path['path'], $path['params'] ?? []), $paths);
     }
 
+    /**
+     * @param array<string, string> $params
+     * @return array<string, string>
+     */
     public function render($path, $params): array
     {
         $hash = sha1($path . json_encode($params));

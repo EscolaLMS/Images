@@ -8,10 +8,14 @@ use EscolaLms\Images\Repositories\Contracts\ImageCacheRepositoryContract;
 
 class ImageCacheRepository extends BaseRepository implements ImageCacheRepositoryContract
 {
-    protected $fieldSearchable = [
+    /** @var array<int, string>  */
+    protected array $fieldSearchable = [
         'path',
     ];
 
+    /**
+     * @return array<int, string>
+     */
     public function getFieldsSearchable(): array
     {
         return $this->fieldSearchable;

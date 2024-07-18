@@ -3,7 +3,7 @@
   "description": "Escola Headless LMS Images manipulation",
   "type": "package",
   "require": {
-    "php": ">=7.4",
+    "php": ">=8.0",
     "laravel/framework": ">=8.0",
     "escolalms/core": "^1",
     "intervention/image": "^2",

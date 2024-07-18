@@ -11,7 +11,7 @@ use Illuminate\Support\ServiceProvider;
 
 class EventServiceProviders extends ServiceProvider
 {
-    public function boot()
+    public function boot(): void
     {
         Event::listen([FileDeleted::class, FileStored::class], function (File $event) {
              app(ImagesServiceContract::class)->clearImageCacheByDirectory($event->getPath());
