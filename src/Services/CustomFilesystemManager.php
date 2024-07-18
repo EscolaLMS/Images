@@ -56,9 +56,9 @@ class CustomFilesystemManager extends FilesystemManager
         return $result;
     }
 
-    private function dispatchEventAfterPut(string|false $result): void
+    private function dispatchEventAfterPut(string|bool $result): void
     {
-        if ($result) {
+        if ($result && is_string($result)) {
             event(new FileStored($result));
         }
     }
