@@ -5,8 +5,8 @@ namespace EscolaLms\Images\Services\Contracts;
 interface ImagesServiceContract
 {
     /**
-     * @param array<int, array<string, string>> $paths
-     * @return array<int, string>
+     * @param array<string, array<string, string>> $paths
+     * @return array<string, array<string, string>>
      */
     public function images(array $paths): array;
 

@@ -27,7 +27,9 @@ class CustomFilesystemManager extends FilesystemManager
     public function put($path, $contents, $options = [])
     {
         $result = parent::put($path, $contents, $options);
-        $this->dispatchEventAfterPut($result);
+        if ($result && is_string($result)) {
+            $this->dispatchEventAfterPut($result);
+        }
 
         return $result;
     }
@@ -35,7 +37,9 @@ class CustomFilesystemManager extends FilesystemManager
     public function putFile(string $path, $file, $options = [])
     {
         $result = parent::putFile($path, $file, $options);
-        $this->dispatchEventAfterPut($result);
+        if ($result) {
+            $this->dispatchEventAfterPut($result);
+        }
 
         return $result;
     }
@@ -43,12 +47,14 @@ class CustomFilesystemManager extends FilesystemManager
     public function putFileAs(string $path, $file, $name, $options = [])
     {
         $result = parent::putFileAs($path, $file, $name, $options);
-        $this->dispatchEventAfterPut($result);
+        if ($result) {
+            $this->dispatchEventAfterPut($result);
+        }
 
         return $result;
     }
 
-    private function dispatchEventAfterPut($result): void
+    private function dispatchEventAfterPut(string $result): void
     {
         if ($result) {
             event(new FileStored($result));

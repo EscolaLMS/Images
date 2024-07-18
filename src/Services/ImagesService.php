@@ -26,8 +26,8 @@ class ImagesService implements ImagesServiceContract
     }
 
     /**
-     * @param array<int, array<string, string>> $paths
-     * @return array<int, string>
+     * @param array<string, array<string, string>> $paths
+     * @return array<string, array<string, string>>
      */
     public function images(array $paths): array
     {
@@ -38,7 +38,7 @@ class ImagesService implements ImagesServiceContract
      * @param array<string, string> $params
      * @return array<string, string>
      */
-    public function render($path, $params): array
+    public function render(string $path, $params): array
     {
         $hash = sha1($path . json_encode($params));
         $ext = pathinfo($path)['extension'] ?? null;
@@ -117,6 +117,10 @@ class ImagesService implements ImagesServiceContract
         return $path;
     }
 
+    /**
+     * @param array<string, string> $params
+     * @return int[]|null[]
+     */
     private function determineWidthAndHeight(InterventionImage $img, array $params): array
     {
         if (isset($params['size'])) {
@@ -137,7 +141,7 @@ class ImagesService implements ImagesServiceContract
         return [null, null];
     }
 
-    private function determineWidth(InterventionImage $img, $width): ?int
+    private function determineWidth(InterventionImage $img, string|int|null $width): ?int
     {
         if (is_null($width)) {
             return null;
@@ -159,7 +163,7 @@ class ImagesService implements ImagesServiceContract
         return $width === 0 ? null : $width;
     }
 
-    private function determineHeight(InterventionImage $img, $height): ?int
+    private function determineHeight(InterventionImage $img, string|int|null $height): ?int
     {
         if (is_null($height)) {
             return null;

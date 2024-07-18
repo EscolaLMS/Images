@@ -25,6 +25,7 @@ class ImagesController extends Controller implements ImagesControllerSwagger
 
     public function image(Request $request): RedirectResponse
     {
+        /** @var string $path */
         $path = $request->get('path');
         $params = $request->except(['path']);
         $output = $this->imagesService->render($path, $params);
