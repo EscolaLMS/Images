@@ -6,9 +6,11 @@ use EscolaLms\Core\Repositories\Criteria\Primitives\LikeCriterion;
 use EscolaLms\Images\Enum\ConstantEnum;
 use EscolaLms\Images\Enum\SupportedFormatsEnum;
 use EscolaLms\Images\Events\FileStored;
+use EscolaLms\Images\Models\ImageCache;
 use EscolaLms\Images\Repositories\Contracts\ImageCacheRepositoryContract;
 use EscolaLms\Images\Services\Contracts\ImagesServiceContract;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Constraint;
@@ -94,10 +96,12 @@ class ImagesService implements ImagesServiceContract
 
     public function clearImageCacheByDirectory(string $path): void
     {
+        /** @var Collection<int, ImageCache> $imageCaches */
         $imageCaches = $this->imageCacheRepository->searchByCriteria([
             new LikeCriterion('path', str_replace(basename($path), '', $path)),
         ]);
 
+        /** @var ImageCache $imageCache */
         foreach ($imageCaches as $imageCache) {
             Storage::delete($imageCache->hash_path);
             $this->imageCacheRepository->delete($imageCache->getKey());

@@ -6,6 +6,9 @@ use EscolaLms\Images\Database\Factories\ImageCacheFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property string $hash_path
+ */
 class ImageCache extends Model
 {
     use HasFactory;
