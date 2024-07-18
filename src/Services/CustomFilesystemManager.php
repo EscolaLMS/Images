@@ -13,6 +13,7 @@ class CustomFilesystemManager extends FilesystemManager
         parent::__construct($app);
     }
 
+    // @phpstan-ignore-next-line
     public function delete($paths): bool
     {
         $result = parent::delete($paths);
@@ -24,6 +25,7 @@ class CustomFilesystemManager extends FilesystemManager
         return $result;
     }
 
+    // @phpstan-ignore-next-line
     public function put(string $path, $contents, mixed $options = []): string|bool
     {
         $result = parent::put($path, $contents, $options);
@@ -34,6 +36,7 @@ class CustomFilesystemManager extends FilesystemManager
         return $result;
     }
 
+    // @phpstan-ignore-next-line
     public function putFile(string $path, $file, mixed $options = []): string|false
     {
         $result = parent::putFile($path, $file, $options);
@@ -43,6 +46,7 @@ class CustomFilesystemManager extends FilesystemManager
         return $result;
     }
 
+    // @phpstan-ignore-next-line
     public function putFileAs(string $path, $file, $name, mixed $options = []): string|false
     {
         $result = parent::putFileAs($path, $file, $name, $options);

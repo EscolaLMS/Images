@@ -37,7 +37,7 @@ class ImagesController extends Controller implements ImagesControllerSwagger
 
     public function images(Request $request): JsonResponse
     {
-        /** @var array<int, array<string, string>> $paths */
+        /** @var array<string, array<string, string|array<string, string>>> $paths */
         $paths = $request->input('paths', []);
         $output = $this->imagesService->images($paths);
         return response()->json($output);
