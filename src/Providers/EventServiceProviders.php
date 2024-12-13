@@ -2,19 +2,19 @@
 
 namespace EscolaLms\Images\Providers;
 
-use EscolaLms\Images\Events\File;
 use EscolaLms\Images\Events\FileDeleted;
 use EscolaLms\Images\Events\FileStored;
-use EscolaLms\Images\Services\Contracts\ImagesServiceContract;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\ServiceProvider;
+use EscolaLms\Images\Listeners\ClearImageCacheListener;
+use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProviders extends ServiceProvider
 {
-    public function boot(): void
-    {
-        Event::listen([FileDeleted::class, FileStored::class], function (File $event) {
-             app(ImagesServiceContract::class)->clearImageCacheByDirectory($event->getPath());
-        });
-    }
+    protected $listen = [
+        FileDeleted::class => [
+            ClearImageCacheListener::class,
+        ],
+        FileStored::class => [
+            ClearImageCacheListener::class,
+        ],
+    ];
 }
